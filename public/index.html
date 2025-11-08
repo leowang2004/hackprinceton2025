@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knot API Credit Score Demo</title>
+  <!-- Load Tailwind CSS for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Knot.js Web SDK -->
+  <script src="https://cdn.knotapi.com/knot.js"></script>
+  <style>
+    /* Simple spinner for loading states */
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, .1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-left-color: #09f;
+      animation: spin 1s ease infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+  <div class="container mx-auto max-w-2xl p-8 mt-10 bg-white rounded-lg shadow-xl">
+    
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Financial Health Check</h1>
+    <p class="text-gray-600 mb-6">Link your bank account to analyze your transaction history and receive a custom lending offer.</p>
+    
+    <!-- Step 1: Link Account -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold text-gray-700 mb-3">Step 1: Link Your Account</h2>
+      <button id="link-account-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">
+        Link Bank Account
+      </button>
+    </div>
+
+    <!-- Step 2: Calculate Score -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold text-gray-700 mb-3">Step 2: Get Your Score</h2>
+      <button id="get-score-btn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+        Analyze & Calculate Score
+      </button>
+    </div>
+
+    <!-- Results Area -->
+    <div id="results-container" class="bg-gray-50 p-6 rounded-lg shadow-inner hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Financial Report</h2>
+      
+      <!-- Loading Spinner -->
+      <div id="loading-spinner" class="flex justify-center items-center h-32 hidden">
+        <div class="spinner"></div>
+        <p class="ml-4 text-gray-600">Analyzing your data...</p>
+      </div>
+
+      <!-- Result Content -->
+      <div id="result-content" class="hidden">
+        <div class="text-center mb-6">
+          <p class="text-lg text-gray-600">Your Custom Credit Score</p>
+          <p id="score-display" class="text-7xl font-bold text-blue-600">---</p>
+        </div>
+        
+        <div id="offer-display" class="border border-gray-200 rounded-lg p-4">
+          <!-- Offer content will be injected here -->
+        </div>
+
+        <div class="mt-4 text-sm text-gray-500">
+          <h4 class="font-semibold mb-1">Analysis Details:</h4>
+          <pre id="analysis-details" class="bg-white p-3 rounded overflow-x-auto"></pre>
+        </div>
+      </div>
+    </div>
+
+     <!-- Message Area -->
+     <div id="message-area" class="mt-4 text-center"></div>
+
+  </div>
+
+  <script>
+    // --- Get Elements ---
+    const linkButton = document.getElementById('link-account-btn');
+    const scoreButton = document.getElementById('get-score-btn');
+    const resultsContainer = document.getElementById('results-container');
+    const result_content = document.getElementById('result-content');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const messageArea = document.getElementById('message-area');
+    const scoreDisplay = document.getElementById('score-display');
+    const offerDisplay = document.getElementById('offer-display');
+    const analysisDetails = document.getElementById('analysis-details');
+
+    // IMPORTANT: Get this from your Knot Dashboard
+    const KNOT_COMPANY_ID = process.env.KNOT_COMPANY_ID || 'YOUR_KNOT_COMPANY_ID';
+    if(KNOT_COMPANY_ID === 'YOUR_KNOT_COMPANY_ID') {
+      showMessage('error', 'Please add your KNOT_COMPANY_ID to the .env file and restart the server.');
+    }
+
+    // --- Event Listeners ---
+
+    /**
+     * 1. Click Handler for Linking Account
+     */
+    linkButton.addEventListener('click', async () => {
+      showMessage('info', 'Creating session...');
+      linkButton.disabled = true;
+
+      try {
+        // 1.1 Fetch session_id from our backend
+        const sessionResponse = await fetch('/api/create-session', { method: 'POST' });
+        if (!sessionResponse.ok) throw new Error('Failed to create session.');
+        
+        const { sessionId } = await sessionResponse.json();
+        
+        // 1.2 Initialize Knot.js
+        const knot = new Knot({
+          companyId: KNOT_COMPANY_ID,
+          env: 'development' // Match your backend environment
+        });
+
+        // 1.3 Open the Knot Link modal
+        knot.openTransactionLink({
+          sessionId,
+          // Use Knot's test credentials as per the docs
+          testCredentials: {
+            username: 'user_good',
+            password: 'pass_good'
+          },
+          onSuccess: (public_token) => {
+            // 1.4 Send public_token to our backend
+            showMessage('info', 'Account linked! Exchanging token...');
+            exchangeToken(public_token);
+          },
+          onError: (error) => {
+            console.error('Knot Link Error:', error);
+            showMessage('error', `Link failed: ${error.message}`);
+            linkButton.disabled = false;
+          },
+          onClose: () => {
+            console.log('Knot Link closed.');
+            if (!scoreButton.disabled) { // Only re-enable if not successful
+              linkButton.disabled = false;
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error('Error starting link process:', error);
+        showMessage('error', error.message);
+        linkButton.disabled = false;
+      }
+    });
+
+    /**
+     * 2. Click Handler for Getting Score
+     */
+    scoreButton.addEventListener('click', async () => {
+      resultsContainer.classList.remove('hidden');
+      loadingSpinner.classList.remove('hidden');
+      result_content.classList.add('hidden');
+      scoreButton.disabled = true;
+      
+      try {
+        const response = await fetch('/api/get-credit-score');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to get score.');
+        }
+
+        // 2.1 Display Results
+        scoreDisplay.textContent = data.creditScore;
+        analysisDetails.textContent = JSON.stringify(data.analysis, null, 2);
+
+        // Build offer HTML
+        const offer = data.lendingOffer;
+        let offerColor = 'gray';
+        if (offer.status === 'Approved') offerColor = 'green';
+        if (offer.status === 'Declined') offerColor = 'red';
+        
+        offerDisplay.innerHTML = `
+          <h3 class="text-lg font-semibold mb-2 text-gray-800">Lending Offer</h3>
+          <p class="mb-1"><strong class="font-medium">Status:</strong> 
+            <span class="font-bold text-${offerColor}-600">${offer.status}</span>
+          </p>
+          <p class="mb-1"><strong class="font-medium">Max Amount:</strong> $${offer.maxAmount.toLocaleString()}</p>
+          <p class="mb-1"><strong class="font-medium">Rate:</strong> ${offer.interestRate}</p>
+          <p class="mt-2 text-sm text-gray-600">${offer.message}</p>
+        `;
+
+        loadingSpinner.classList.add('hidden');
+        result_content.classList.remove('hidden');
+
+      } catch (error) {
+        console.error('Error getting score:', error);
+        showMessage('error', error.message);
+        loadingSpinner.classList.add('hidden');
+      } finally {
+        scoreButton.disabled = false; // Allow re-calculation
+      }
+    });
+
+
+    // --- Helper Functions ---
+
+    /**
+     * Helper to send the public_token to the backend
+     */
+    async function exchangeToken(public_token) {
+      try {
+        const response = await fetch('/api/exchange-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ public_token })
+        });
+        
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Token exchange failed.');
+        }
+
+        showMessage('success', 'Account linked and secured! You can now get your score.');
+        scoreButton.disabled = false; // Enable the "Get Score" button
+        linkButton.textContent = 'Link Another Account'; // Change button text
+        linkButton.disabled = false;
+
+      } catch (error) {
+        console.error('Error exchanging token:', error);
+        showMessage('error', error.message);
+      }
+    }
+
+    /**
+     * Helper to show status messages to the user
+     */
+    function showMessage(type, text) {
+      let colorClass = 'text-gray-700';
+      if (type === 'success') colorClass = 'text-green-600';
+      if (type === 'error') colorClass = 'text-red-600';
+      
+      messageArea.innerHTML = `<p class="${colorClass} font-medium">${text}</p>`;
+    }
+  </script>
+</body>
+</html>

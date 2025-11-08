@@ -1,241 +1,77 @@
-# Amazon Credit Score App - HackPrinceton 2025
+Knot API Credit Scoring Backend (Simulated)
 
-A mobile application that calculates alternative credit scores based on Amazon transaction data using the Knot API.
+This project is a Node.js backend that calculates a custom credit score based on financial data.
 
-## Overview
+This version is modified to read from a local dummydata.json file instead of making a live call to the Knot API. This allows you to develop and test your credit scoring logic (calculateCreditScore and getLendingAmount functions) without needing a live, linked account.
 
-This project consists of two main components:
+The server is still structured as if it would call the Knot API, with the Knot SDK imported and the live-data-fetching code commented out in server.js for easy swapping later.
 
-1. **React Native Mobile App** - Cross-platform app (iOS & Android) with fake Amazon login
-2. **Node.js Backend** - Express server with Knot API integration and credit score calculation
+How to Run This Project
 
-## Features
+1. Prerequisites
 
-- 📱 Authentic Amazon-style login interface
-- 🔐 Fake authentication for demonstration
-- 🔗 Knot API integration for transaction data
-- 📊 Alternative credit score calculation (300-850 range)
-- 🎨 Beautiful UI with circular progress indicator
-- 🔄 Real-time communication between mobile and backend
+Node.js (v18 or later).
 
-## Architecture
+2. Setup
 
-```
-┌─────────────────────┐
-│  React Native App   │
-│  (iOS & Android)    │
-└──────────┬──────────┘
-           │ HTTP/JSON
-           ▼
-┌─────────────────────┐
-│  Node.js Backend    │
-│  (Express)          │
-└──────────┬──────────┘
-           │ REST API
-           ▼
-┌─────────────────────┐
-│   Knot API          │
-│  (Transaction Data) │
-└─────────────────────┘
-```
+Install Dependencies: Open your terminal in the project's root directory and run:
 
-## Quick Start
-
-### Backend Setup (Node.js/Express)
-
-```bash
-cd backend
 npm install
-cp .env.example .env
-# Edit .env with your Knot API credentials (optional)
+
+
+Configure Environment:
+
+Rename .env.example to .env.
+
+You only need to set the PORT (e.g., PORT=3000). The Knot API keys are not required for this simulation to run.
+
+3. Run the Server
+
+With your .env file saved, start the server:
+
 npm start
-```
 
-The backend will run on `http://localhost:3000`
 
-### Mobile App Setup (React Native)
+You should see messages:
 
-1. Navigate to mobile app directory:
-```bash
-cd mobile-app
-npm install
-```
+Server running at http://localhost:3000
+Ready to calculate credit scores from dummydata.json.
+Test endpoint: http://localhost:3000/api/get-credit-score
 
-2. For iOS (macOS only):
-```bash
-cd ios && pod install && cd ..
-npm run ios
-```
 
-3. For Android:
-```bash
-npm run android
-```
+4. How to Use
 
-4. Update backend URL in `src/services/NetworkService.js` if needed
+Since the account linking frontend is not included in this version, you can test the logic directly using your browser or a tool like curl.
 
-## Documentation
+Option 1: In your browser
+Simply visit: http://localhost:3000/api/get-credit-score
 
-- [Backend README](./backend/README.md) - Detailed backend documentation
-- [iOS App README](./ios-app/README.md) - Detailed iOS app documentation
-- [Knot API Documentation](https://docs.knotapi.com/sdk/ios) - Official Knot API docs
+Option 2: In your terminal (using curl)
 
-## How It Works
+curl http://localhost:3000/api/get-credit-score
 
-1. **User Login**: User enters credentials on fake Amazon login screen
-2. **Backend Authentication**: App sends login request to backend
-3. **Knot API Integration**: Backend uses Knot API to fetch Amazon transaction data
-4. **Score Calculation**: Backend calculates credit score using custom algorithms
-5. **Display Results**: App receives and displays the credit score
 
-## Credit Score Algorithm
+Example Output:
 
-The alternative credit score is calculated based on:
+You will get a JSON response based on the logic in server.js and the data in dummydata.json.
 
-- **Transaction Volume** (100 points): Number of transactions
-- **Consistency** (100 points): Regularity of purchases
-- **Average Amount** (100 points): Average transaction size
-- **Diversity** (100 points): Variety of purchase categories
-- **Recent Activity** (50 points): Transactions in last 30 days
+(Based on the included dummy data, the user has one overdraft, so their score will be penalized).
 
-**Total Range:** 300-850 (following FICO model)
-
-## Knot API Integration
-
-This project integrates with the [Knot API](https://docs.knotapi.com/sdk/ios) to retrieve Amazon transaction data.
-
-To use with real Knot API:
-1. Sign up at https://knotapi.com
-2. Get API credentials
-3. Add to backend `.env` file
-4. Integrate Knot SDK in mobile app (React Native compatible)
-
-**Note:** Mock data is used if Knot API credentials are not configured.
-
-## Project Structure
-
-```
-hackprinceton2025/
-├── mobile-app/                  # React Native mobile application
-│   ├── src/
-│   │   ├── App.js               # Main app with navigation
-│   │   ├── screens/
-│   │   │   ├── LoginScreen.js   # Amazon login screen
-│   │   │   └── CreditScoreScreen.js
-│   │   ├── components/
-│   │   │   └── CircularProgress.js
-│   │   └── services/
-│   │       └── NetworkService.js
-│   ├── android/                 # Android native code
-│   ├── ios/                     # iOS native code
-│   ├── package.json
-│   └── README.md
-├── backend/                     # Node.js backend server
-│   ├── routes/
-│   │   ├── auth.js
-│   │   └── knot.js
-│   ├── services/
-│   │   ├── knotService.js
-│   │   └── creditScoreService.js
-│   ├── server.js
-│   ├── package.json
-│   └── README.md
-└── README.md
-```
-
-## API Endpoints
-
-### POST `/api/login`
-Authenticate user and calculate credit score
-
-**Request:**
-```json
 {
-  "email": "user@example.com",
-  "password": "password"
+  "creditScore": 625,
+  "lendingOffer": {
+    "status": "Approved",
+    "maxAmount": 2000,
+    "interestRate": "18.0%",
+    "message": "You qualify for a small starter loan."
+  },
+  "analysis": {
+    "accountName": "Main Checking",
+    "currentBalance": 2500.77,
+    "totalTransactionsAnalyzed": 10,
+    "source": "dummydata.json (simulation)"
+  }
 }
-```
 
-**Response:**
-```json
-{
-  "success": true,
-  "creditScore": 750,
-  "transactionCount": 20
-}
-```
 
-### GET `/api/knot/status`
-Check Knot API connection status
-
-### GET `/api/knot/transactions/:email`
-Retrieve transaction data for user
-
-## Technologies Used
-
-### Mobile App
-- React Native 0.72+
-- React Navigation
-- Axios (HTTP client)
-- React Native SVG
-
-### Backend
-- Node.js
-- Express.js
-- Axios (HTTP client)
-- Knot API SDK
-
-## Development Notes
-
-- **Fake Authentication**: Current implementation accepts any login credentials
-- **Mock Data**: Backend generates mock transactions if Knot API is not configured
-- **Development Mode**: Use localhost for testing
-- **Production**: Use HTTPS and proper authentication
-
-## Security Considerations
-
-- Implement real OAuth with Amazon for production
-- Use HTTPS for all communications
-- Secure API keys in environment variables
-- Add rate limiting and request validation
-- Implement proper user authentication
-
-## Future Enhancements
-
-- [ ] Real Amazon OAuth integration
-- [ ] User database for persistent storage
-- [ ] Advanced ML-based credit scoring
-- [ ] Transaction history view in app
-- [ ] Credit score trend tracking
-- [ ] Push notifications
-- [ ] Android app version
-- [ ] Web dashboard
-
-## Testing
-
-### Backend
-```bash
-cd backend
-npm test  # (if tests are added)
-```
-
-### iOS App
-Run in Xcode simulator or on device
-
-## Contributing
-
-This is a hackathon project for HackPrinceton 2025. Contributions and improvements are welcome!
-
-## License
-
-MIT
-
-## Authors
-
-HackPrinceton 2025 Team
-
-## Acknowledgments
-
-- Knot API for transaction data access
-- Amazon for inspiration (this is not affiliated with Amazon)
-- HackPrinceton 2025 organizers
+Now you can modify dummydata.json and server.js to test all your different scoring scenarios!
