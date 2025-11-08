@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PaymentProvider } from './contexts/PaymentContext';
 import { WelcomePage } from './components/WelcomePage';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { ConnectedMerchantsLanding } from './components/ConnectedMerchantsLanding';
@@ -91,7 +92,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen">
+    <PaymentProvider>
+      <div className="min-h-screen">
       {currentStep === 'welcome' && (
         <WelcomePage onGetStarted={handleGetStarted} />
       )}
@@ -167,6 +169,7 @@ export default function App() {
       {currentStep === 'confirmation' && (
         <OrderConfirmation onStartOver={handleStartOver} />
       )}
-    </div>
+      </div>
+    </PaymentProvider>
   );
 }

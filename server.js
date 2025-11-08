@@ -16,12 +16,23 @@ const __dirname = path.dirname(__filename);
 
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Middleware to parse JSON bodies
-// Serve static files for the demo checkout pages
-app.use(express.static(path.join(__dirname, 'newfrontend', 'build')));
 
-app.get('*', (_, res) => {
-  res.sendFile(path.join(__dirname, 'newfrontend', 'build', 'index.html'));
-});
+// Serve static files for the demo checkout pages (both old and new frontend)
+app.use(express.static(path.join(__dirname, 'newfrontend')));
+// Serve built React app if it exists
+const buildPath = path.join(__dirname, 'newfrontend', 'build');
+const distPath = path.join(__dirname, 'newfrontend', 'dist');
+try {
+  if (require('fs').existsSync(distPath)) {
+    app.use(express.static(distPath));
+  } else if (require('fs').existsSync(buildPath)) {
+    app.use(express.static(buildPath));
+  }
+} catch (e) {
+  console.log('No built frontend found, serving source files');
+}
+
+// API Routes come before catch-all route
 
 // --- Initialize Knot API Client (Structure - commented) ---
 // Keep this block for future implementation; currently unused while simulating from dummydata.json
@@ -143,6 +154,60 @@ app.get('/api/get-credit-score', async (req, res) => {
     } else {
       res.status(500).json({ error: 'Failed to process financial data.' });
     }
+  }
+});
+
+/**
+ * GET CONNECTED MERCHANTS
+ * Returns the merchant information from transaction data
+ */
+app.get('/api/get-merchants', async (req, res) => {
+  try {
+    const transactionsPath = path.join(__dirname, 'dummydata.json');
+    const transactionsFile = await fs.readFile(transactionsPath, 'utf8');
+    const transactionsRaw = JSON.parse(transactionsFile);
+    
+    // Extract unique merchant info
+    const merchant = transactionsRaw.merchant || { id: 0, name: 'Unknown' };
+    const transactionCount = (transactionsRaw.transactions || []).length;
+    
+    res.json({
+      merchants: [
+        {
+          id: merchant.id,
+          name: merchant.name,
+          transactionCount: transactionCount,
+          connected: true
+        }
+      ],
+      totalConnected: 1
+    });
+  } catch (error) {
+    console.error('Error getting merchants:', error.message);
+    res.status(500).json({ error: 'Failed to load merchant data.' });
+  }
+});
+
+// Catch-all route for React app (must be after API routes)
+app.get('*', (req, res) => {
+  // Don't serve index.html for API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // Try to serve the React app
+  const distIndexPath = path.join(__dirname, 'newfrontend', 'dist', 'index.html');
+  const buildIndexPath = path.join(__dirname, 'newfrontend', 'build', 'index.html');
+  const srcIndexPath = path.join(__dirname, 'newfrontend', 'src', 'index.html');
+  
+  if (require('fs').existsSync(distIndexPath)) {
+    res.sendFile(distIndexPath);
+  } else if (require('fs').existsSync(buildIndexPath)) {
+    res.sendFile(buildIndexPath);
+  } else if (require('fs').existsSync(srcIndexPath)) {
+    res.sendFile(srcIndexPath);
+  } else {
+    res.status(404).send('Frontend not found. Please build the React app first.');
   }
 });
 
@@ -329,7 +394,7 @@ function getLendingOffer(transactions, currentBalance, overdueDebt = 0, deposits
         status: 'Approved',
         maxAmount: Math.round(maxAmount),
         interestRate: `${interestRatePct}% APR`,
-        message: `FlexPay approved! You qualify for up to $${Math.round(maxAmount).toLocaleString()}.`,
+        message: `WingsPay approved! You qualify for up to $${Math.round(maxAmount).toLocaleString()}.`,
         termMonths,
         recommendedMonthlyPayment,
       }

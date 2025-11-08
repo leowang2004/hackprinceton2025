@@ -1,12 +1,20 @@
 import { CheckCircle2, Calendar, Package, Mail, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { usePayment } from '../contexts/PaymentContext';
+import { formatCurrency } from '../services/api';
 
 interface OrderConfirmationProps {
   onStartOver: () => void;
 }
 
 export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
+  const { cartTotal, selectedPlan } = usePayment();
+  
+  // Calculate payment amounts
+  const monthlyPayment = selectedPlan ? selectedPlan.monthly : 0;
+  const numPayments = selectedPlan ? selectedPlan.termMonths : 4;
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
       {/* Header */}
@@ -48,29 +56,29 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
             </div>
             <div>
               <h2 className="text-xl">Your Payment Plan</h2>
-              <p className="text-slate-600">4 interest-free payments</p>
+              <p className="text-slate-600">{numPayments} interest-free payments</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-4 gap-4">
             <div className="bg-green-50 rounded-xl p-4 border border-green-200">
               <div className="text-sm text-green-700 mb-1">✓ Paid Today</div>
-              <div className="text-2xl mb-1">$209.79</div>
+              <div className="text-2xl mb-1">{formatCurrency(monthlyPayment)}</div>
               <div className="text-sm text-slate-600">Nov 8, 2024</div>
             </div>
             <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
               <div className="text-sm text-slate-600 mb-1">Payment 2</div>
-              <div className="text-2xl mb-1">$209.79</div>
+              <div className="text-2xl mb-1">{formatCurrency(monthlyPayment)}</div>
               <div className="text-sm text-slate-600">Nov 15, 2024</div>
             </div>
             <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
               <div className="text-sm text-slate-600 mb-1">Payment 3</div>
-              <div className="text-2xl mb-1">$209.79</div>
+              <div className="text-2xl mb-1">{formatCurrency(monthlyPayment)}</div>
               <div className="text-sm text-slate-600">Nov 22, 2024</div>
             </div>
             <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
               <div className="text-sm text-slate-600 mb-1">Payment 4</div>
-              <div className="text-2xl mb-1">$209.79</div>
+              <div className="text-2xl mb-1">{formatCurrency(monthlyPayment)}</div>
               <div className="text-sm text-slate-600">Nov 29, 2024</div>
             </div>
           </div>
@@ -134,7 +142,7 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
             <div className="h-px bg-slate-200 my-4" />
             <div className="flex justify-between text-xl">
               <span>Total</span>
-              <span>$839.16</span>
+              <span>{formatCurrency(cartTotal)}</span>
             </div>
           </div>
         </div>

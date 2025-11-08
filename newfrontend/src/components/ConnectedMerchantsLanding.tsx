@@ -2,6 +2,8 @@ import { Store, ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, Sparkles, Plu
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { AddConnectionDialog } from './AddConnectionDialog';
+import { usePayment } from '../contexts/PaymentContext';
+import { formatCurrency } from '../services/api';
 
 interface ConnectedMerchantsLandingProps {
   onMerchantSelect: (merchant: string) => void;
@@ -10,6 +12,7 @@ interface ConnectedMerchantsLandingProps {
 
 export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore }: ConnectedMerchantsLandingProps) {
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const { creditScore, maxCreditLimit, loading, connectedMerchantsCount } = usePayment();
 
   const merchants = [
     {
@@ -89,7 +92,7 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
               </div>
               <ArrowRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <div className="text-5xl mb-2">748</div>
+            <div className="text-5xl mb-2">{loading ? '...' : creditScore}</div>
             <div className="text-sm opacity-90 flex items-center gap-1">
               <TrendingUp className="h-4 w-4" />
               <span>+12 this month</span>
@@ -97,11 +100,11 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
           </button>
 
           <div className="bg-white rounded-2xl p-6 border border-slate-200">
-            <div className="text-3xl mb-1">4</div>
+            <div className="text-3xl mb-1">{loading ? '...' : connectedMerchantsCount}</div>
             <div className="text-slate-600">Connected Stores</div>
           </div>
           <div className="bg-white rounded-2xl p-6 border border-slate-200">
-            <div className="text-3xl mb-1">$5,000</div>
+            <div className="text-3xl mb-1">{loading ? '...' : formatCurrency(maxCreditLimit)}</div>
             <div className="text-slate-600">Available Credit</div>
           </div>
           <div className="bg-white rounded-2xl p-6 border border-slate-200">

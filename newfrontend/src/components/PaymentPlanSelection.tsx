@@ -1,6 +1,8 @@
 import { ArrowLeft, Calendar, CheckCircle2, Zap, Shield } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState } from 'react';
+import { usePayment } from '../contexts/PaymentContext';
+import { getPaymentSchedule, formatCurrency } from '../services/api';
 
 interface PaymentPlanSelectionProps {
   onSelectPlan: () => void;
@@ -8,46 +10,92 @@ interface PaymentPlanSelectionProps {
 }
 
 export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelectionProps) {
-  const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
+  const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null);
+  const { 
+    cartTotal,
+    creditScore, 
+    maxCreditLimit, 
+    approved, 
+    loading,
+    paymentPlans,
+    declineReason,
+    setSelectedPlan 
+  } = usePayment();
 
-  const plans = [
-    {
-      id: 1,
-      name: 'Pay in 4',
-      recommended: true,
-      payments: [
-        { amount: 209.79, date: 'Today', description: 'Due at checkout' },
-        { amount: 209.79, date: 'Nov 15', description: 'In 1 week' },
-        { amount: 209.79, date: 'Nov 22', description: 'In 2 weeks' },
-        { amount: 209.79, date: 'Nov 29', description: 'In 3 weeks' },
+  const handleSelectPlan = (index: number) => {
+    setSelectedPlanIndex(index);
+    setSelectedPlan(paymentPlans[index]);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center mx-auto mb-4">
+            <Zap className="h-6 w-6 text-white animate-pulse" />
+          </div>
+          <h2 className="text-xl mb-2">Analyzing your credit...</h2>
+          <p className="text-slate-600">Please wait while we calculate your payment options</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!approved) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="max-w-md text-center">
+          <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">⚠️</span>
+          </div>
+          <h2 className="text-2xl mb-4">Unable to Approve</h2>
+          <p className="text-slate-600 mb-3">
+            {declineReason}
+          </p>
+          {creditScore > 0 && (
+            <div className="bg-slate-100 rounded-lg p-4 mb-3">
+              <div className="text-sm text-slate-600 mb-1">Your Credit Score</div>
+              <div className="text-2xl font-semibold">{creditScore}</div>
+              {maxCreditLimit > 0 && (
+                <>
+                  <div className="text-sm text-slate-600 mt-2 mb-1">Maximum Credit Available</div>
+                  <div className="text-xl">${maxCreditLimit.toFixed(2)}</div>
+                  <div className="text-sm text-slate-600 mt-2">Cart Total: ${cartTotal.toFixed(2)}</div>
+                </>
+              )}
+            </div>
+          )}
+          <p className="text-sm text-slate-500 mb-6">
+            {maxCreditLimit > 0 && cartTotal > maxCreditLimit
+              ? `Try reducing your cart total to ${formatCurrency(maxCreditLimit)} or less.`
+              : 'Build your credit history by making regular purchases and try again later.'}
+          </p>
+          <Button onClick={onBack} variant="outline">
+            Back to Payment Options
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Transform backend plans into UI format
+  const plans = paymentPlans.map((plan, index) => {
+    const schedule = getPaymentSchedule(plan);
+    return {
+      id: index + 1,
+      name: `Pay in ${plan.months}`,
+      recommended: index === 0, // First plan (4 payments) is recommended
+      payments: schedule,
+      features: [
+        plan.rate === 0 ? '0% interest' : `${plan.rate.toFixed(1)}% APR`,
+        plan.months === 4 ? 'Most popular' : plan.months === 6 ? 'Lower payments' : 'Lowest monthly payment',
+        'Instant approval'
       ],
-      features: ['0% interest', 'No credit check', 'Instant approval'],
-    },
-    {
-      id: 2,
-      name: 'Pay in 6',
-      recommended: false,
-      payments: [
-        { amount: 139.86, date: 'Today', description: 'Due at checkout' },
-        { amount: 139.86, date: 'Dec 8', description: 'In 1 month' },
-        { amount: 139.86, date: 'Jan 8', description: 'In 2 months' },
-        { amount: 139.86, date: 'Feb 8', description: 'In 3 months' },
-        { amount: 139.86, date: 'Mar 8', description: 'In 4 months' },
-        { amount: 139.86, date: 'Apr 8', description: 'In 5 months' },
-      ],
-      features: ['0% interest', 'Lower payments', 'Flexible schedule'],
-    },
-    {
-      id: 3,
-      name: 'Pay in 12',
-      recommended: false,
-      payments: [
-        { amount: 69.93, date: 'Today', description: 'Due at checkout' },
-        { amount: 69.93, date: 'Monthly', description: '11 more payments' },
-      ],
-      features: ['3.9% APR', 'Lowest monthly payment', 'Extended term'],
-    },
-  ];
+      monthlyAmount: plan.monthly,
+      totalAmount: plan.totalAmount,
+      months: plan.months
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -75,14 +123,24 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         {/* Order Summary Banner */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200 mb-8 flex items-center justify-between">
-          <div>
-            <div className="text-sm text-slate-600 mb-1">Order Total</div>
-            <div className="text-3xl">$839.16</div>
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-sm text-slate-600 mb-1">Order Total</div>
+              <div className="text-3xl">{formatCurrency(cartTotal)}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-slate-600 mb-1">Credit Score</div>
+              <div className={`text-2xl ${creditScore >= 700 ? 'text-green-600' : creditScore >= 600 ? 'text-yellow-600' : 'text-orange-600'}`}>
+                {creditScore}
+              </div>
+              <div className="text-xs text-slate-500 mt-1">
+                Max Credit: {formatCurrency(maxCreditLimit)}
+              </div>
+            </div>
           </div>
-          <div className="text-right">
-            <div className="text-sm text-slate-600 mb-1">Items</div>
-            <div>2 products</div>
+          <div className="bg-green-50 rounded-lg p-3 text-sm text-green-900">
+            ✓ You're approved for interest-free financing up to {formatCurrency(maxCreditLimit)}
           </div>
         </div>
 
@@ -91,15 +149,15 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
           {plans.map((plan) => (
             <button
               key={plan.id}
-              onClick={() => setSelectedPlan(plan.id)}
+              onClick={() => handleSelectPlan(plan.id - 1)}
               className={`text-left transition-all duration-300 ${
-                selectedPlan === plan.id
+                selectedPlanIndex === (plan.id - 1)
                   ? 'scale-105'
                   : 'hover:scale-102'
               }`}
             >
               <div className={`relative bg-white rounded-2xl p-6 border-2 h-full ${
-                selectedPlan === plan.id
+                selectedPlanIndex === (plan.id - 1)
                   ? 'border-indigo-600 shadow-xl shadow-indigo-100'
                   : 'border-slate-200 hover:border-slate-300'
               }`}>
@@ -112,25 +170,30 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
                 <div className="mb-6">
                   <h3 className="text-xl mb-2">{plan.name}</h3>
                   <div className="text-3xl mb-1">
-                    ${plan.payments[0].amount}
+                    {formatCurrency(plan.monthlyAmount)}
                     <span className="text-sm text-slate-600">/payment</span>
                   </div>
                   <div className="text-sm text-slate-600">
-                    {plan.payments.length} payments
+                    {plan.months} payments • Total: {formatCurrency(plan.totalAmount)}
                   </div>
                 </div>
 
                 {/* Payment Schedule Preview */}
                 <div className="space-y-2 mb-6 pb-6 border-b border-slate-200">
-                  {plan.payments.slice(0, plan.id === 3 ? 2 : plan.payments.length).map((payment, index) => (
+                  {plan.payments.slice(0, plan.months > 6 ? 2 : plan.payments.length).map((payment, index) => (
                     <div key={index} className="flex justify-between text-sm">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-slate-400" />
                         <span className="text-slate-600">{payment.date}</span>
                       </div>
-                      <span>${payment.amount}</span>
+                      <span>{formatCurrency(payment.amount)}</span>
                     </div>
                   ))}
+                  {plan.months > 6 && (
+                    <div className="text-xs text-slate-500 text-center pt-2">
+                      + {plan.months - 2} more monthly payments
+                    </div>
+                  )}
                 </div>
 
                 {/* Features */}
@@ -144,7 +207,7 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
                 </div>
 
                 {/* Select Button */}
-                {selectedPlan === plan.id && (
+                {selectedPlanIndex === (plan.id - 1) && (
                   <div className="flex items-center justify-center gap-2 text-indigo-600 py-2 bg-indigo-50 rounded-lg">
                     <CheckCircle2 className="h-5 w-5" />
                     <span>Selected</span>
@@ -189,18 +252,18 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
         <div className="bg-white rounded-2xl p-6 border border-slate-200">
           <Button
             onClick={onSelectPlan}
-            disabled={!selectedPlan}
+            disabled={selectedPlanIndex === null}
             className={`w-full py-6 rounded-xl text-lg ${
-              selectedPlan
+              selectedPlanIndex !== null
                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
                 : 'bg-slate-100 text-slate-400 cursor-not-allowed'
             }`}
           >
-            {selectedPlan ? 'Continue to Confirmation' : 'Select a Payment Plan'}
+            {selectedPlanIndex !== null ? 'Continue to Confirmation' : 'Select a Payment Plan'}
           </Button>
-          {selectedPlan && (
+          {selectedPlanIndex !== null && (
             <p className="text-center text-sm text-slate-600 mt-4">
-              Your first payment of ${plans.find(p => p.id === selectedPlan)?.payments[0].amount} will be processed today
+              Your first payment of {formatCurrency(plans[selectedPlanIndex + 1].payments[0].amount)} will be processed today
             </p>
           )}
         </div>
