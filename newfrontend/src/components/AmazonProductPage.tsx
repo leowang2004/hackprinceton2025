@@ -4,10 +4,11 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface AmazonProductPageProps {
   onAddToCart: () => void;
+  onBuyNow: () => void;
   onBack: () => void;
 }
 
-export function AmazonProductPage({ onAddToCart, onBack }: AmazonProductPageProps) {
+export function AmazonProductPage({ onAddToCart, onBuyNow, onBack }: AmazonProductPageProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Amazon-style Header */}
@@ -122,6 +123,7 @@ export function AmazonProductPage({ onAddToCart, onBack }: AmazonProductPageProp
                 Add to Cart
               </Button>
               <Button
+                onClick={onBuyNow}
                 className="w-full bg-orange-500 hover:bg-orange-600 text-black py-6 rounded-full"
               >
                 Buy Now
