@@ -1,11 +1,41 @@
 import { ArrowLeft, TrendingUp, Database, DollarSign, ShoppingBag, CreditCard, Sparkles, Info } from 'lucide-react';
 import { Button } from './ui/button';
+import { useState } from 'react';
 
 interface CreditScoreDetailProps {
   onBack: () => void;
 }
 
 export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
+  const chartData = [
+    { month: 'Aug', score: 712, limit: 4200, past: true },
+    { month: 'Sep', score: 724, limit: 4500, past: true },
+    { month: 'Oct', score: 736, limit: 4800, past: true },
+    { month: 'Nov', score: 748, limit: 5000, current: true },
+    { month: 'Dec', score: 762, limit: 5400, future: true },
+    { month: 'Jan', score: 778, limit: 5900, future: true },
+    { month: 'Feb', score: 793, limit: 6500, future: true },
+  ];
+
+  const [selectedBarIndex, setSelectedBarIndex] = useState(3); // Nov is index 3 (current month)
+
+  const selectedData = chartData[selectedBarIndex];
+  const projectedData = chartData[Math.min(selectedBarIndex + 3, chartData.length - 1)];
+  
+  // Calculate monthly growth based on previous months
+  const calculateMonthlyGrowth = (index: number) => {
+    if (index === 0) return 12; // default for first month
+    const avgGrowth = chartData
+      .slice(Math.max(0, index - 2), index + 1)
+      .reduce((acc, item, idx, arr) => {
+        if (idx === 0) return 0;
+        return acc + (item.score - arr[idx - 1].score);
+      }, 0) / Math.max(1, index);
+    return Math.round(avgGrowth);
+  };
+
+  const monthlyGrowth = calculateMonthlyGrowth(selectedBarIndex);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {/* Header */}
@@ -157,55 +187,81 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
               <div className="mb-6">
                 <div className="relative h-64 flex items-end gap-2">
                   {/* Simplified bar chart */}
-                  {[
-                    { month: 'Aug', score: 712, past: true },
-                    { month: 'Sep', score: 724, past: true },
-                    { month: 'Oct', score: 736, past: true },
-                    { month: 'Nov', score: 748, current: true },
-                    { month: 'Dec', score: 762, future: true },
-                    { month: 'Jan', score: 778, future: true },
-                    { month: 'Feb', score: 793, future: true },
-                  ].map((data, index) => (
-                    <div key={index} className="flex-1 flex flex-col items-center">
-                      <div className="w-full flex flex-col justify-end h-56 mb-2">
-                        <div
-                          className={`w-full rounded-t-lg transition-all ${
-                            data.current
-                              ? 'bg-gradient-to-t from-indigo-600 to-purple-600'
-                              : data.future
-                              ? 'bg-gradient-to-t from-indigo-300 to-purple-300 opacity-60'
-                              : 'bg-slate-300'
-                          }`}
-                          style={{ height: `${((data.score - 600) / 250) * 100}%` }}
-                        />
-                      </div>
-                      <div className="text-center">
-                        <div className={`text-sm mb-1 ${data.current ? '' : 'text-slate-600'}`}>
-                          {data.score}
+                  {chartData.map((data, index) => {
+                    const isSelected = selectedBarIndex === index;
+                    return (
+                      <button
+                        key={index}
+                        className="flex-1 flex flex-col items-center focus:outline-none group"
+                        onClick={() => setSelectedBarIndex(index)}
+                      >
+                        <div className="w-full flex flex-col justify-end h-56 mb-2 relative">
+                          <div
+                            className={`w-full rounded-t-lg transition-all cursor-pointer ${
+                              isSelected
+                                ? 'ring-4 ring-indigo-400 ring-offset-2'
+                                : ''
+                            } ${
+                              data.current
+                                ? 'bg-gradient-to-t from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
+                                : data.future
+                                ? 'bg-gradient-to-t from-indigo-300 to-purple-300 opacity-60 hover:opacity-80'
+                                : 'bg-slate-300 hover:bg-slate-400'
+                            }`}
+                            style={{ height: `${((data.score - 600) / 250) * 100}%` }}
+                          />
+                          {isSelected && (
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                              ${(data.limit / 1000).toFixed(1)}k
+                            </div>
+                          )}
                         </div>
-                        <div className="text-xs text-slate-500">{data.month}</div>
-                      </div>
-                    </div>
-                  ))}
+                        <div className="text-center">
+                          <div className={`text-sm mb-1 transition-all ${
+                            isSelected 
+                              ? 'text-indigo-600' 
+                              : data.current 
+                              ? 'text-slate-900' 
+                              : 'text-slate-600'
+                          }`}>
+                            {data.score}
+                          </div>
+                          <div className={`text-xs ${isSelected ? 'text-indigo-600' : 'text-slate-500'}`}>
+                            {data.month}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Projection Info */}
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <div className="text-sm text-slate-600 mb-1">Projected (3 months)</div>
-                  <div className="text-2xl text-green-600 mb-1">+45</div>
-                  <div className="text-xs text-slate-600">Based on current habits</div>
+                <div className={`rounded-xl p-4 transition-all ${
+                  selectedBarIndex === 3 ? 'bg-green-50 border-2 border-green-300' : 'bg-slate-50'
+                }`}>
+                  <div className="text-sm text-slate-600 mb-1">
+                    {selectedData.current ? 'Your Current Credit Limit' : selectedData.future ? 'Future Credit Limit' : 'Past Credit Limit'}
+                  </div>
+                  <div className={`text-2xl mb-1 ${selectedBarIndex === 3 ? 'text-green-600' : 'text-slate-900'}`}>
+                    ${selectedData.limit.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-slate-600">Score: {selectedData.score} ({selectedData.month})</div>
                 </div>
                 <div className="bg-slate-50 rounded-xl p-4">
-                  <div className="text-sm text-slate-600 mb-1">Best Case Scenario</div>
-                  <div className="text-2xl text-indigo-600 mb-1">810+</div>
-                  <div className="text-xs text-slate-600">With improvements</div>
+                  <div className="text-sm text-slate-600 mb-1">Projected Limit (3 months)</div>
+                  <div className="text-2xl text-indigo-600 mb-1">
+                    ${projectedData.limit.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-slate-600">Score: {projectedData.score} ({projectedData.month})</div>
                 </div>
                 <div className="bg-slate-50 rounded-xl p-4">
                   <div className="text-sm text-slate-600 mb-1">Monthly Growth</div>
-                  <div className="text-2xl mb-1">+15</div>
-                  <div className="text-xs text-slate-600">Average rate</div>
+                  <div className="text-2xl mb-1">
+                    {monthlyGrowth > 0 ? '+' : ''}{monthlyGrowth}
+                  </div>
+                  <div className="text-xs text-slate-600">Average score increase</div>
                 </div>
               </div>
             </div>

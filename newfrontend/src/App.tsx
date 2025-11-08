@@ -1,6 +1,11 @@
 import { useState } from 'react';
+import { WelcomePage } from './components/WelcomePage';
+import { OnboardingFlow } from './components/OnboardingFlow';
 import { ConnectedMerchantsLanding } from './components/ConnectedMerchantsLanding';
 import { AmazonProductPage } from './components/AmazonProductPage';
+import { WayfairProductPage } from './components/WayfairProductPage';
+import { BestBuyProductPage } from './components/BestBuyProductPage';
+import { TargetProductPage } from './components/TargetProductPage';
 import { ShoppingCart } from './components/ShoppingCart';
 import { ModernCheckout } from './components/ModernCheckout';
 import { PaymentPlanSelection } from './components/PaymentPlanSelection';
@@ -8,6 +13,8 @@ import { OrderConfirmation } from './components/OrderConfirmation';
 import { CreditScoreDetail } from './components/CreditScoreDetail';
 
 type FlowStep = 
+  | 'welcome'
+  | 'onboarding'
   | 'landing' 
   | 'credit-score'
   | 'product' 
@@ -17,8 +24,16 @@ type FlowStep =
   | 'confirmation';
 
 export default function App() {
-  const [currentStep, setCurrentStep] = useState<FlowStep>('landing');
+  const [currentStep, setCurrentStep] = useState<FlowStep>('welcome');
   const [selectedMerchant, setSelectedMerchant] = useState<string | null>(null);
+
+  const handleGetStarted = () => {
+    setCurrentStep('onboarding');
+  };
+
+  const handleOnboardingComplete = () => {
+    setCurrentStep('landing');
+  };
 
   const handleMerchantSelect = (merchant: string) => {
     setSelectedMerchant(merchant);
@@ -77,6 +92,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+      {currentStep === 'welcome' && (
+        <WelcomePage onGetStarted={handleGetStarted} />
+      )}
+
+      {currentStep === 'onboarding' && (
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
+      )}
+
       {currentStep === 'landing' && (
         <ConnectedMerchantsLanding 
           onMerchantSelect={handleMerchantSelect}
@@ -88,8 +111,32 @@ export default function App() {
         <CreditScoreDetail onBack={handleBackFromCreditScore} />
       )}
 
-      {currentStep === 'product' && (
+      {currentStep === 'product' && selectedMerchant === 'amazon' && (
         <AmazonProductPage 
+          onAddToCart={handleAddToCart}
+          onBuyNow={handleBuyNow}
+          onBack={handleBackToLanding}
+        />
+      )}
+
+      {currentStep === 'product' && selectedMerchant === 'wayfair' && (
+        <WayfairProductPage 
+          onAddToCart={handleAddToCart}
+          onBuyNow={handleBuyNow}
+          onBack={handleBackToLanding}
+        />
+      )}
+
+      {currentStep === 'product' && selectedMerchant === 'bestbuy' && (
+        <BestBuyProductPage 
+          onAddToCart={handleAddToCart}
+          onBuyNow={handleBuyNow}
+          onBack={handleBackToLanding}
+        />
+      )}
+
+      {currentStep === 'product' && selectedMerchant === 'target' && (
+        <TargetProductPage 
           onAddToCart={handleAddToCart}
           onBuyNow={handleBuyNow}
           onBack={handleBackToLanding}

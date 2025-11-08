@@ -1,4 +1,7 @@
-import { Store, ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, Sparkles } from 'lucide-react';
+import { Store, ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, Sparkles, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from './ui/button';
+import { AddConnectionDialog } from './AddConnectionDialog';
 
 interface ConnectedMerchantsLandingProps {
   onMerchantSelect: (merchant: string) => void;
@@ -6,6 +9,8 @@ interface ConnectedMerchantsLandingProps {
 }
 
 export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore }: ConnectedMerchantsLandingProps) {
+  const [showAddDialog, setShowAddDialog] = useState(false);
+
   const merchants = [
     {
       id: 'amazon',
@@ -128,6 +133,23 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
             </button>
           ))}
         </div>
+
+        {/* Add Connection Button */}
+        <div className="mt-12">
+          <Button
+            onClick={() => setShowAddDialog(true)}
+            className="h-14 px-8 text-lg bg-gradient-to-br from-indigo-600 to-purple-600 text-white hover:shadow-2xl hover:shadow-indigo-200 transition-all duration-300 hover:scale-105"
+          >
+            <Plus className="h-6 w-6 mr-2" />
+            Add Connection
+          </Button>
+        </div>
+
+        {/* Add Connection Dialog */}
+        <AddConnectionDialog
+          open={showAddDialog}
+          onClose={() => setShowAddDialog(false)}
+        />
 
         {/* Info Banner */}
         <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8 border border-indigo-100">
