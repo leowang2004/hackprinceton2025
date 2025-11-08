@@ -16,6 +16,8 @@ const __dirname = path.dirname(__filename);
 
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Middleware to parse JSON bodies
+// Serve static files for the demo checkout pages
+app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Initialize Knot API Client (Structure - commented) ---
 // Keep this block for future implementation; currently unused while simulating from dummydata.json
@@ -77,7 +79,8 @@ app.get('/api/get-credit-score', async (req, res) => {
       // Scoring logic treats positive amounts as spending; negative as income.
       return {
         amount: total, // treat all orders as spending (positive)
-        description: `${order.order_status || 'ORDER'} ${order.id}`
+        description: `${order.order_status || 'ORDER'} ${order.id}`,
+        datetime: order?.datetime
       };
     });
 
@@ -90,6 +93,9 @@ app.get('/api/get-credit-score', async (req, res) => {
         balance: { current: 5000 } // arbitrary current balance for scoring context
       }
     ];
+    
+    // Optional: include total overdue debt in dummydata.json as { "overdueDebt": 250 }
+    const overdueDebt = Number(raw.overdueDebt) || 0;
     // --- END SIMULATION ---
 
 
@@ -97,11 +103,11 @@ app.get('/api/get-credit-score', async (req, res) => {
     const primaryAccount = accounts.find(a => a.subtype === 'checking') || accounts[0];
     const currentBalance = primaryAccount.balance.current;
     
-    // 4. Calculate Score
-    const score = calculateCreditScore(transactions, currentBalance);
+  // 4. Calculate Score (spending-only heuristic)
+  const score = calculateCreditScore(transactions, currentBalance);
 
-    // 5. Determine Lending Amount
-    const lendingOffer = getLendingAmount(score);
+  // 5. Determine Lending Offer (liquid, spending-only, considers overdue debt if provided)
+  const lendingOffer = getLendingOffer(transactions, currentBalance, overdueDebt);
 
     // 6. Return the result
     res.json({
@@ -112,6 +118,7 @@ app.get('/api/get-credit-score', async (req, res) => {
         currentBalance,
         totalTransactionsAnalyzed: transactions.length,
         source: 'dummydata.json (simulation)',
+        metrics: lendingOffer.metrics,
       },
     });
 
@@ -143,31 +150,27 @@ app.listen(PORT, () => {
  * @returns {number} A score between 300 and 850.
  */
 function calculateCreditScore(transactions, currentBalance) {
-  let score = 300; // FICO-like base score
-  let totalIncome = 0;
-  let totalSpending = 0;
-  let overdrafts = 0;
+  if (!transactions || transactions.length === 0) return 300;
 
-  for (const t of transactions) {
-    const amt = Number(t.amount) || 0;
-    if (amt < 0) totalIncome += Math.abs(amt); else totalSpending += amt;
+  const monthly = aggregateMonthly(transactions);
+  const avgMonthlySpend = monthly.avg;
+  const vol = monthly.volatility; // coefficient of variation (sd/avg)
+  const freqPerMonth = monthly.avgCount;
+  const maxSingle = monthly.maxSingle;
 
-    const desc = (t.description || '').toLowerCase();
-    if (desc.includes('overdraft') || desc.includes('nsf')) overdrafts++;
-  }
+  // Capacity proxy: lower spend, lower volatility, reasonable frequency, smaller max single purchase
+  const spendScale = 4000;
+  const base = clamp(1 - (avgMonthlySpend / spendScale), 0, 1);
+  const volatilityScore = clamp(1 - vol, 0, 1);
+  const freqScore = clamp(freqPerMonth / 40, 0, 1); // cap at ~40 orders/mo
+  const singlePurchasePenalty = clamp(1 - (maxSingle / Math.max(100, avgMonthlySpend * 0.8)), 0, 1);
 
-  const netFlow = totalIncome - totalSpending;
-  if (netFlow > 0) score += 150;
-  if (netFlow > totalIncome * 0.1) score += 50;
+  const capacityScore = clamp(0.45 * base + 0.30 * volatilityScore + 0.15 * freqScore + 0.10 * singlePurchasePenalty, 0, 1);
 
-  if (currentBalance > 1000) score += 50;
-  if (currentBalance > 5000) score += 75;
-
-  if (overdrafts === 0) score += 100; else score -= overdrafts * 50;
-
-  if (transactions.length > 50) score += 25;
-
-  return Math.min(Math.max(score, 300), 850);
+  const baseScore = 300 + capacityScore * 550;
+  // Bonus for having some cash balance
+  const balanceBonus = currentBalance > 1000 ? (currentBalance > 5000 ? 40 : 20) : 0;
+  return Math.min(Math.max(Math.round(baseScore + balanceBonus), 300), 850);
 }
 
 /**
@@ -175,34 +178,98 @@ function calculateCreditScore(transactions, currentBalance) {
  * * @param {number} score - The custom credit score.
  * @returns {object} An object describing the lending offer.
  */
-function getLendingAmount(score) {
-  if (score >= 750) {
-    return {
-      status: 'Approved',
-      maxAmount: 25000,
-      interestRate: '5.0%',
-      message: 'Excellent! You qualify for our best rates.'
-    };
-  } else if (score >= 650) {
-    return {
-      status: 'Approved',
-      maxAmount: 10000,
-      interestRate: '9.5%',
-      message: 'Good. You qualify for a standard loan.'
-    };
-  } else if (score >= 550) {
-    return {
-      status: 'Approved',
-      maxAmount: 2000,
-      interestRate: '18.0%',
-      message: 'You qualify for a small starter loan.'
-    };
-  } else {
-    return {
-      status: 'Declined',
-      maxAmount: 0,
-      interestRate: 'N/A',
-      message: 'Unfortunately, we cannot offer you a loan at this time.'
-    };
-  }
+function getLendingOffer(transactions, currentBalance, overdueDebt = 0) {
+  const monthly = aggregateMonthly(transactions);
+  const avgMonthlySpend = monthly.avg;
+  const vol = monthly.volatility;
+  const freqPerMonth = monthly.avgCount;
+  const maxSingle = monthly.maxSingle;
+
+  const spendScale = 4000;
+  const base = clamp(1 - (avgMonthlySpend / spendScale), 0, 1);
+  const volatilityScore = clamp(1 - vol, 0, 1);
+  const freqScore = clamp(freqPerMonth / 40, 0, 1);
+  const singlePurchasePenalty = clamp(1 - (maxSingle / Math.max(100, avgMonthlySpend * 0.8)), 0, 1);
+  const capacityScore = clamp(0.5 * base + 0.3 * volatilityScore + 0.15 * freqScore + 0.05 * singlePurchasePenalty, 0, 1);
+  const recommendedMonthlyPayment = roundToTwo(Math.max(0, capacityScore) * 0.12 * avgMonthlySpend);
+
+  // Term based on volatility and capacity
+  let termMonths = 6;
+  if (capacityScore >= 0.75 && vol <= 0.3) termMonths = 12;
+  else if (capacityScore >= 0.55 && vol <= 0.6) termMonths = 9;
+  else if (capacityScore < 0.35 || vol > 1.0) termMonths = 3;
+
+  let maxAmount = roundToTwo(recommendedMonthlyPayment * termMonths);
+  // Overdue debt directly reduces available amount
+  maxAmount = Math.max(0, maxAmount - overdueDebt);
+
+  // Interest rate inversely proportional to capacityScore (range ~7%..24%)
+  const interestRatePct = roundToOne(24 - capacityScore * 17);
+
+  // Decision: require minimum capacity and that overdueDebt is not dominant
+  const approved = capacityScore >= 0.4 && overdueDebt <= maxAmount * 0.25;
+
+  const offer = approved
+    ? {
+        status: 'Approved',
+        maxAmount: Math.round(maxAmount),
+        interestRate: `${interestRatePct}% APR`,
+        message: 'FlexPay approved based on your spending stability.',
+        termMonths,
+        recommendedMonthlyPayment,
+      }
+    : {
+        status: 'Declined',
+        maxAmount: 0,
+        interestRate: 'N/A',
+        message: overdueDebt > 0
+          ? 'FlexPay declined due to existing overdue balance. Please resolve it and try again.'
+          : 'FlexPay declined based on recent spending patterns. Try again later.',
+        termMonths: 0,
+        recommendedMonthlyPayment: 0,
+      };
+
+  return {
+    ...offer,
+    metrics: {
+      avgMonthlySpend: roundToTwo(avgMonthlySpend),
+      monthlyStdDev: roundToTwo(monthly.sd),
+      volatility: roundToThree(vol),
+      purchaseFreqPerMonth: roundToTwo(freqPerMonth),
+      maxSinglePurchase: roundToTwo(maxSingle),
+      overdueDebt,
+      capacityScore: roundToThree(capacityScore),
+    }
+  };
 }
+
+function aggregateMonthly(transactions) {
+  const buckets = new Map();
+  let maxSingle = 0;
+  for (const t of transactions) {
+    const amt = Number(t.amount) || 0;
+    if (amt > maxSingle) maxSingle = amt;
+    const dt = new Date(t.datetime || t.date || t.time || Date.now());
+    const key = `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, '0')}`;
+    const bucket = buckets.get(key) || { sum: 0, count: 0 };
+    bucket.sum += Math.max(0, amt); // spending only (positive)
+    bucket.count += 1;
+    buckets.set(key, bucket);
+  }
+  const months = Array.from(buckets.values());
+  const n = Math.max(1, months.length);
+  const sums = months.map(b => b.sum);
+  const counts = months.map(b => b.count);
+  const total = sums.reduce((a, b) => a + b, 0);
+  const avg = total / n;
+  const variance = sums.reduce((acc, s) => acc + Math.pow(s - avg, 2), 0) / n;
+  const sd = Math.sqrt(variance);
+  const volatility = avg > 0 ? sd / avg : 1;
+  const avgCount = counts.reduce((a, b) => a + b, 0) / n;
+  return { avg, sd, volatility, avgCount, maxSingle };
+}
+
+function clamp(x, min, max) { return Math.max(min, Math.min(max, x)); }
+function roundToTwo(x) { return Math.round((x + Number.EPSILON) * 100) / 100; }
+function roundToThree(x) { return Math.round((x + Number.EPSILON) * 1000) / 1000; }
+function roundToOne(x) { return Math.round((x + Number.EPSILON) * 10) / 10; }

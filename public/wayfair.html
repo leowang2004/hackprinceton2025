@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wayfair Checkout - FlexPay Demo</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .wayfair-header { background:#6a1b9a; color:#fff; padding:.75rem 1rem; font-weight:bold; font-size:1.25rem; }
+    .price-tag { font-weight:bold; }
+    .couch-img { width:100%; max-height:220px; object-fit:cover; border-radius:6px; border:1px solid var(--border); margin-bottom:.75rem; }
+    .financing-hint { font-size:.75rem; color:#555; margin-top:.35rem; }
+  </style>
+</head>
+<body>
+  <header class="wayfair-header">Wayfair Furniture</header>
+  <main class="container">
+    <h1 class="page-title">Checkout</h1>
+    <section class="card">
+      <h2 class="section-title">Item</h2>
+      <img src="https://images.unsplash.com/photo-1582582494700-1ccb7e1cb0c1?auto=format&fit=crop&w=800&q=60" alt="Premium Couch" class="couch-img" />
+      <p><strong>Product:</strong> Lennox Modular Fabric Sectional Sofa</p>
+      <p><strong>Dimensions:</strong> 120" W x 40" D x 34" H</p>
+      <p><strong>Fabric:</strong> Performance Linen Blend</p>
+      <p><strong>Warranty:</strong> 5 Years Frame / 2 Years Fabric</p>
+      <table class="summary-table" style="margin-top:.75rem">
+        <tbody>
+          <tr><td>Base Price</td><td>$899.00</td></tr>
+          <tr><td>Delivery</td><td>$49.00</td></tr>
+          <tr><td>Sales Tax</td><td>$72.60</td></tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row"><td>Total</td><td id="total-price">$1,020.60</td></tr>
+        </tfoot>
+      </table>
+      <p class="financing-hint">FlexPay can split this into manageable installments if approved.</p>
+    </section>
+
+    <section class="payment-method card">
+      <h2 class="section-title">Payment Method</h2>
+      <div class="pay-options">
+        <label class="option">
+          <input type="radio" name="pay" value="card" checked />
+          <span>Mastercard **** 5787</span>
+        </label>
+        <label class="option flexpay">
+          <input type="radio" name="pay" value="flexpay" />
+          <span><strong>FlexPay</strong> Financing</span>
+          <span class="badge">SAVE CASH</span>
+        </label>
+      </div>
+      <div id="flexpay-details" class="flexpay-details hidden">
+        <p>Example plan preview (auto-adjusts if approved):</p>
+        <ul class="installments" id="installments-list">
+          <li>Today: —</li>
+          <li>30 Days: —</li>
+          <li>60 Days: —</li>
+          <li>90 Days: —</li>
+        </ul>
+      </div>
+      <button id="place-order" class="primary-btn">Place Order</button>
+      <p class="secure-note">Secure checkout powered by FlexPay underwriting.</p>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content card">
+      <h2 id="modal-title">FlexPay Evaluation</h2>
+      <p id="modal-message">Processing...</p>
+      <div class="modal-actions">
+        <button id="close-modal" class="secondary-btn">Close</button>
+        <button id="retry-btn" class="secondary-btn hidden">Use regular card</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/wayfair.js"></script>
+</body>
+</html>

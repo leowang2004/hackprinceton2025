@@ -1,0 +1,56 @@
+/* Basic Amazon-like aesthetic (simplified) */
+:root {
+  --bg: #f3f3f3;
+  --card-bg: #fff;
+  --border: #ddd;
+  --primary: #ff9900;
+  --primary-hover: #e68a00;
+  --accent: #232f3e;
+  --danger: #c92a2a;
+  --success: #2b8a3e;
+  --text: #111;
+}
+body { margin:0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+.site-header { background: var(--accent); padding: .75rem 1rem; color:#fff; font-weight:bold; font-size:1.25rem; }
+.logo .sm { font-size: .8em; color: #ffcc66; }
+.container { max-width: 960px; margin: 1.5rem auto; padding: 0 1rem; }
+.container.narrow { max-width: 640px; }
+.page-title { margin:0 0 1rem; }
+.card { background: var(--card-bg); border:1px solid var(--border); border-radius:6px; padding:1rem 1.25rem; box-shadow:0 1px 2px rgba(0,0,0,.05); margin-bottom:1.5rem; }
+.card.centered { text-align:center; }
+.section-title { margin:.25rem 0 1rem; font-size:1.1rem; }
+.summary-table { width:100%; border-collapse: collapse; font-size:.95rem; }
+.summary-table th, .summary-table td { padding:.5rem .5rem; border-bottom:1px solid var(--border); text-align:left; }
+.summary-table tfoot td { font-weight:bold; }
+.summary-table .total-row td { border-top:2px solid var(--border); }
+.payment-method .pay-options { display:flex; flex-direction:column; gap:.5rem; margin-bottom:.75rem; }
+.option { display:flex; align-items:center; gap:.5rem; background:#fafafa; border:1px solid var(--border); padding:.5rem .75rem; border-radius:4px; cursor:pointer; }
+.option input { transform: scale(1.1); }
+.option.flexpay { position:relative; }
+.badge { background: var(--primary); color:#000; font-size:.65rem; padding:.2rem .4rem; border-radius:3px; position:absolute; right:.5rem; top:.5rem; }
+.flexpay-details { background:#fff8e5; border:1px solid #e8d39a; padding:.75rem .9rem; border-radius:4px; margin-bottom:.75rem; }
+.installments { list-style:none; padding:0; margin:.5rem 0 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:.25rem; }
+.installments li { background:#fff; border:1px solid var(--border); padding:.35rem .5rem; border-radius:4px; font-size:.75rem; }
+.primary-btn { background: var(--primary); border:none; color:#000; font-weight:bold; padding:.8rem 1.1rem; border-radius:4px; cursor:pointer; font-size:.95rem; }
+.primary-btn:hover { background: var(--primary-hover); }
+.secondary-btn { background:#fff; border:1px solid var(--border); padding:.5rem .85rem; border-radius:4px; cursor:pointer; }
+.secondary-btn:hover { background:#f0f0f0; }
+.secure-note { font-size:.7rem; color:#555; margin-top:.5rem; }
+.success-title { font-size:2rem; margin:0 0 .75rem; }
+.lead { font-size:1rem; margin:.25rem 0 1rem; }
+.details p { margin:.15rem 0; font-size:.85rem; }
+
+/* Modal */
+.modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; padding:1rem; }
+.modal-content { max-width:420px; width:100%; }
+.hidden { display:none !important; }
+
+/* Status styles */
+.status-approved { color: var(--success); font-weight:bold; }
+.status-declined { color: var(--danger); font-weight:bold; }
+
+/* Animations */
+@keyframes pulse { 0%,100% { transform:scale(1);} 50% { transform:scale(1.03);} }
+.primary-btn:active { animation:pulse .3s; }
+
+.success-body { background:#e6f7ec; }
