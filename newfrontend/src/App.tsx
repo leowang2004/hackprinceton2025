@@ -5,9 +5,11 @@ import { ShoppingCart } from './components/ShoppingCart';
 import { ModernCheckout } from './components/ModernCheckout';
 import { PaymentPlanSelection } from './components/PaymentPlanSelection';
 import { OrderConfirmation } from './components/OrderConfirmation';
+import { CreditScoreDetail } from './components/CreditScoreDetail';
 
 type FlowStep = 
   | 'landing' 
+  | 'credit-score'
   | 'product' 
   | 'cart' 
   | 'checkout' 
@@ -30,6 +32,10 @@ export default function App() {
 
   const handleAddToCart = () => {
     setCurrentStep('cart');
+  };
+
+  const handleBuyNow = () => {
+    setCurrentStep('checkout');
   };
 
   const handleBackToProduct = () => {
@@ -61,15 +67,31 @@ export default function App() {
     setSelectedMerchant(null);
   };
 
+  const handleViewCreditScore = () => {
+    setCurrentStep('credit-score');
+  };
+
+  const handleBackFromCreditScore = () => {
+    setCurrentStep('landing');
+  };
+
   return (
     <div className="min-h-screen">
       {currentStep === 'landing' && (
-        <ConnectedMerchantsLanding onMerchantSelect={handleMerchantSelect} />
+        <ConnectedMerchantsLanding 
+          onMerchantSelect={handleMerchantSelect}
+          onViewCreditScore={handleViewCreditScore}
+        />
+      )}
+
+      {currentStep === 'credit-score' && (
+        <CreditScoreDetail onBack={handleBackFromCreditScore} />
       )}
 
       {currentStep === 'product' && (
         <AmazonProductPage 
           onAddToCart={handleAddToCart}
+          onBuyNow={handleBuyNow}
           onBack={handleBackToLanding}
         />
       )}

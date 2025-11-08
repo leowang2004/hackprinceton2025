@@ -1,10 +1,11 @@
-import { Store, ShoppingBag, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Store, ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, Sparkles } from 'lucide-react';
 
 interface ConnectedMerchantsLandingProps {
   onMerchantSelect: (merchant: string) => void;
+  onViewCreditScore: () => void;
 }
 
-export function ConnectedMerchantsLanding({ onMerchantSelect }: ConnectedMerchantsLandingProps) {
+export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore }: ConnectedMerchantsLandingProps) {
   const merchants = [
     {
       id: 'amazon',
@@ -70,7 +71,26 @@ export function ConnectedMerchantsLanding({ onMerchantSelect }: ConnectedMerchan
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-4 gap-6 mb-12">
+          {/* Credit Score Card - Featured */}
+          <button
+            onClick={onViewCreditScore}
+            className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 border border-indigo-500 text-white hover:shadow-2xl hover:shadow-indigo-200 transition-all duration-300 group cursor-pointer"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                <span className="text-sm opacity-90">WingsPay Score</span>
+              </div>
+              <ArrowRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="text-5xl mb-2">748</div>
+            <div className="text-sm opacity-90 flex items-center gap-1">
+              <TrendingUp className="h-4 w-4" />
+              <span>+12 this month</span>
+            </div>
+          </button>
+
           <div className="bg-white rounded-2xl p-6 border border-slate-200">
             <div className="text-3xl mb-1">4</div>
             <div className="text-slate-600">Connected Stores</div>
