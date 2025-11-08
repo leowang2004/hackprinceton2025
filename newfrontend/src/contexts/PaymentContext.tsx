@@ -22,37 +22,17 @@ interface PaymentContextType {
   connectedMerchantsCount: number;
   refreshPaymentData: () => Promise<void>;
   setSelectedPlan: (plan: PaymentPlan | null) => void;
+  setCartItems: (items: CartItem[]) => void;
+  addToCart: (item: CartItem) => void;
+  clearCart: () => void;
+  updateQuantity: (itemId: string, quantity: number) => void;
+  removeItem: (itemId: string) => void;
 }
 
 const PaymentContext = createContext<PaymentContextType | undefined>(undefined);
 
-// Initial cart data (would come from a real cart in production)
-const INITIAL_CART_ITEMS: CartItem[] = [
-  {
-    id: '1',
-    name: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones',
-    price: 399.99,
-    quantity: 1,
-    image: 'https://images.unsplash.com/photo-1604780032295-9f8186eede96?w=400'
-  },
-  {
-    id: '2',
-    name: 'Apple AirPods Pro (2nd Generation)',
-    price: 249.00,
-    quantity: 1,
-    image: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=400'
-  },
-  {
-    id: '3',
-    name: 'Samsung Galaxy Buds2 Pro',
-    price: 190.17,
-    quantity: 1,
-    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400'
-  }
-];
-
 export function PaymentProvider({ children }: { children: ReactNode }) {
-  const [cartItems] = useState<CartItem[]>(INITIAL_CART_ITEMS);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartTotal, setCartTotal] = useState(0);
   const [creditScore, setCreditScore] = useState(0);
   const [maxCreditLimit, setMaxCreditLimit] = useState(0);
@@ -62,6 +42,46 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
   const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
   const [declineReason, setDeclineReason] = useState<string>();
   const [connectedMerchantsCount, setConnectedMerchantsCount] = useState(0);
+
+  // Cart management functions
+  const addToCart = (item: CartItem) => {
+    setCartItems(prev => {
+      // Check if item already exists
+      const existingIndex = prev.findIndex(i => i.id === item.id);
+      if (existingIndex >= 0) {
+        // Update quantity if exists
+        const updated = [...prev];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + item.quantity
+        };
+        return updated;
+      }
+      // Add new item
+      return [...prev, item];
+    });
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  const updateQuantity = (itemId: string, quantity: number) => {
+    if (quantity <= 0) {
+      // Remove item if quantity is 0 or less
+      setCartItems(prev => prev.filter(item => item.id !== itemId));
+    } else {
+      setCartItems(prev => 
+        prev.map(item => 
+          item.id === itemId ? { ...item, quantity } : item
+        )
+      );
+    }
+  };
+
+  const removeItem = (itemId: string) => {
+    setCartItems(prev => prev.filter(item => item.id !== itemId));
+  };
 
   // Fetch merchant data
   useEffect(() => {
@@ -78,9 +98,11 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     fetchMerchants();
   }, []);
 
-  // Calculate cart total from items
+  // Calculate cart total from items (including tax)
   useEffect(() => {
-    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const taxRate = 0.08; // 8% tax rate
+    const total = subtotal * (1 + taxRate);
     setCartTotal(total);
   }, [cartItems]);
 
@@ -136,7 +158,12 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     declineReason,
     connectedMerchantsCount,
     refreshPaymentData,
-    setSelectedPlan
+    setSelectedPlan,
+    setCartItems,
+    addToCart,
+    clearCart,
+    updateQuantity,
+    removeItem
   };
 
   return <PaymentContext.Provider value={value}>{children}</PaymentContext.Provider>;

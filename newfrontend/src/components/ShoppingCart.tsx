@@ -10,8 +10,26 @@ interface ShoppingCartProps {
 }
 
 export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps) {
-  const { cartTotal, paymentPlans, approved } = usePayment();
+  const { cartTotal, cartItems, paymentPlans, approved, updateQuantity, removeItem } = usePayment();
   const monthlyPayment = approved && paymentPlans.length > 0 ? paymentPlans[0].monthly : 0;
+  
+  // Calculate subtotal (before tax)
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const tax = cartTotal - subtotal; // Tax is the difference
+
+  const handleIncreaseQuantity = (itemId: string, currentQty: number) => {
+    updateQuantity(itemId, currentQty + 1);
+  };
+
+  const handleDecreaseQuantity = (itemId: string, currentQty: number) => {
+    if (currentQty > 1) {
+      updateQuantity(itemId, currentQty - 1);
+    }
+  };
+
+  const handleRemove = (itemId: string) => {
+    removeItem(itemId);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -34,76 +52,51 @@ export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps)
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {/* Item 1 */}
-            <div className="bg-white rounded-xl p-6 border border-slate-200">
-              <div className="flex gap-6">
-                <div className="w-32 h-32 bg-slate-100 rounded-lg flex-shrink-0 overflow-hidden">
-                  <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1604780032295-9f8186eede96?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb255JTIwd2lyZWxlc3MlMjBoZWFkcGhvbmVzJTIwYmxhY2t8ZW58MXx8fHwxNzYyNjIyNzUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                    alt="Sony Headphones"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="mb-2">Sony WH-1000XM5 Wireless Noise Canceling Headphones</h3>
-                  <p className="text-sm text-slate-600 mb-3">Color: Black | In Stock</p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3 border border-slate-300 rounded-lg">
-                      <button className="px-3 py-2 hover:bg-slate-50 transition-colors">
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <span className="text-sm">1</span>
-                      <button className="px-3 py-2 hover:bg-slate-50 transition-colors">
-                        <Plus className="h-4 w-4" />
+            {cartItems.map((item) => (
+              <div key={item.id} className="bg-white rounded-xl p-6 border border-slate-200">
+                <div className="flex gap-6">
+                  <div className="w-32 h-32 bg-slate-100 rounded-lg flex-shrink-0 overflow-hidden">
+                    <ImageWithFallback
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="mb-2">{item.name}</h3>
+                    <p className="text-sm text-slate-600 mb-3">Qty: {item.quantity} | In Stock</p>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 border border-slate-300 rounded-lg">
+                        <button 
+                          onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
+                          className="px-3 py-2 hover:bg-slate-50 transition-colors"
+                          disabled={item.quantity <= 1}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span className="text-sm">{item.quantity}</span>
+                        <button 
+                          onClick={() => handleIncreaseQuantity(item.id, item.quantity)}
+                          className="px-3 py-2 hover:bg-slate-50 transition-colors"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <button 
+                        onClick={() => handleRemove(item.id)}
+                        className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Remove
                       </button>
                     </div>
-                    <button className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1">
-                      <Trash2 className="h-4 w-4" />
-                      Remove
-                    </button>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl mb-1">{formatCurrency(item.price * item.quantity)}</div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl mb-1">$348.00</div>
-                  <div className="text-sm text-slate-500 line-through">$399.99</div>
-                </div>
               </div>
-            </div>
-
-            {/* Item 2 */}
-            <div className="bg-white rounded-xl p-6 border border-slate-200">
-              <div className="flex gap-6">
-                <div className="w-32 h-32 bg-slate-100 rounded-lg flex-shrink-0 overflow-hidden">
-                  <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1668760180303-fcfe2b899e20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFydCUyMHdhdGNoJTIwdGVjaG5vbG9neXxlbnwxfHx8fDE3NjI1OTA3NjR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                    alt="Smart Watch"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="mb-2">Apple Watch Series 9 GPS + Cellular 45mm</h3>
-                  <p className="text-sm text-slate-600 mb-3">Color: Midnight | In Stock</p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3 border border-slate-300 rounded-lg">
-                      <button className="px-3 py-2 hover:bg-slate-50 transition-colors">
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <span className="text-sm">1</span>
-                      <button className="px-3 py-2 hover:bg-slate-50 transition-colors">
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    </div>
-                    <button className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1">
-                      <Trash2 className="h-4 w-4" />
-                      Remove
-                    </button>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl mb-1">$429.00</div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Order Summary */}
@@ -113,8 +106,8 @@ export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps)
               
               <div className="space-y-3 mb-6 pb-6 border-b border-slate-200">
                 <div className="flex justify-between text-slate-600">
-                  <span>Subtotal (2 items)</span>
-                  <span>$777.00</span>
+                  <span>Subtotal ({cartItems.length} items)</span>
+                  <span>{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Shipping</span>
@@ -122,7 +115,7 @@ export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps)
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Estimated Tax</span>
-                  <span>$62.16</span>
+                  <span>{formatCurrency(tax)}</span>
                 </div>
               </div>
 

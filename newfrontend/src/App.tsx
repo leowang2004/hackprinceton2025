@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { PaymentProvider } from './contexts/PaymentContext';
+import { useState, useEffect } from 'react';
+import { PaymentProvider, usePayment } from './contexts/PaymentContext';
 import { WelcomePage } from './components/WelcomePage';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { ConnectedMerchantsLanding } from './components/ConnectedMerchantsLanding';
@@ -28,6 +28,67 @@ export default function App() {
   const [currentStep, setCurrentStep] = useState<FlowStep>('welcome');
   const [selectedMerchant, setSelectedMerchant] = useState<string | null>(null);
 
+  return (
+    <PaymentProvider>
+      <AppContent 
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        selectedMerchant={selectedMerchant}
+        setSelectedMerchant={setSelectedMerchant}
+      />
+    </PaymentProvider>
+  );
+}
+
+function AppContent({ 
+  currentStep, 
+  setCurrentStep, 
+  selectedMerchant, 
+  setSelectedMerchant 
+}: {
+  currentStep: FlowStep;
+  setCurrentStep: (step: FlowStep) => void;
+  selectedMerchant: string | null;
+  setSelectedMerchant: (merchant: string | null) => void;
+}) {
+  const { setCartItems } = usePayment();
+
+  // Define merchant-specific products
+  const loadMerchantProduct = (merchantId: string) => {
+    const merchantProducts: Record<string, any> = {
+      amazon: [{
+        id: 'amz-1',
+        name: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones',
+        price: 348.00, // Current price on Amazon
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1604780032295-9f8186eede96?w=400'
+      }],
+      wayfair: [{
+        id: 'wf-1',
+        name: 'Sealy Premium Memory Foam Mattress - 12-Inch Cooling Gel Memory Foam - Queen Size',
+        price: 799.99, // Sale price (38% OFF from $1,299.99)
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400'
+      }],
+      bestbuy: [{
+        id: 'bb-1',
+        name: 'Sony WH-1000XM5 Wireless Noise-Canceling Headphones',
+        price: 349.99, // Sale price (Save $50 from $399.99)
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1604780032295-9f8186eede96?w=400'
+      }],
+      target: [{
+        id: 'tgt-1',
+        name: 'Nespresso Vertuo Next Coffee and Espresso Maker with Aeroccino',
+        price: 170.99, // RedCard price (5% off $179.99, which is 22% off $229.99)
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=400'
+      }]
+    };
+    
+    return merchantProducts[merchantId] || [];
+  };
+
   const handleGetStarted = () => {
     setCurrentStep('onboarding');
   };
@@ -38,19 +99,32 @@ export default function App() {
 
   const handleMerchantSelect = (merchant: string) => {
     setSelectedMerchant(merchant);
+    // Load merchant products but don't add to cart yet
+    setCartItems([]);
     setCurrentStep('product');
   };
 
   const handleBackToLanding = () => {
     setCurrentStep('landing');
     setSelectedMerchant(null);
+    setCartItems([]); // Clear cart when going back
   };
 
   const handleAddToCart = () => {
+    // Load merchant products into cart
+    if (selectedMerchant) {
+      const products = loadMerchantProduct(selectedMerchant);
+      setCartItems(products);
+    }
     setCurrentStep('cart');
   };
 
   const handleBuyNow = () => {
+    // Load merchant products into cart and go to checkout
+    if (selectedMerchant) {
+      const products = loadMerchantProduct(selectedMerchant);
+      setCartItems(products);
+    }
     setCurrentStep('checkout');
   };
 
@@ -79,8 +153,9 @@ export default function App() {
   };
 
   const handleStartOver = () => {
-    setCurrentStep('landing');
+    setCurrentStep('welcome');
     setSelectedMerchant(null);
+    setCartItems([]); // Clear cart on start over
   };
 
   const handleViewCreditScore = () => {
@@ -92,8 +167,7 @@ export default function App() {
   };
 
   return (
-    <PaymentProvider>
-      <div className="min-h-screen">
+    <div className="min-h-screen">
       {currentStep === 'welcome' && (
         <WelcomePage onGetStarted={handleGetStarted} />
       )}
@@ -169,7 +243,6 @@ export default function App() {
       {currentStep === 'confirmation' && (
         <OrderConfirmation onStartOver={handleStartOver} />
       )}
-      </div>
-    </PaymentProvider>
+    </div>
   );
 }
