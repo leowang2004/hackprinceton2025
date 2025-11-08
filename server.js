@@ -17,7 +17,11 @@ const __dirname = path.dirname(__filename);
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Middleware to parse JSON bodies
 // Serve static files for the demo checkout pages
-app.use(express.static(path.join(__dirname, 'newfrontend')));
+app.use(express.static(path.join(__dirname, 'newfrontend', 'build')));
+
+app.get('*', (_, res) => {
+  res.sendFile(path.join(__dirname, 'newfrontend', 'build', 'index.html'));
+});
 
 // --- Initialize Knot API Client (Structure - commented) ---
 // Keep this block for future implementation; currently unused while simulating from dummydata.json
