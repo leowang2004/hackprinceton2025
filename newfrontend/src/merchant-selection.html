@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WingsPay Demo - Select Merchant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #374151;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .merchant-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .merchant-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-amazon {
+            background: #FF9900;
+            color: black;
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: 0.375rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-amazon:hover {
+            background: #E88B00;
+        }
+
+        .btn-wayfair {
+            background: #7B2CBF;
+            color: white;
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: 0.375rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-wayfair:hover {
+            background: #6A23A8;
+        }
+
+        .brand-amazon {
+            color: #FF9900;
+        }
+
+        .brand-wayfair {
+            color: #7B2CBF;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        WingsPay Demo
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Title Card -->
+        <div class="card text-center mb-8">
+            <h1 class="text-3xl font-bold mb-3">Select a Checkout Experience</h1>
+            <p class="text-gray-600 text-lg">Choose a merchant to simulate a high-value purchase with WingsPay underwriting.</p>
+        </div>
+
+        <!-- Merchant Cards -->
+        <div class="grid-2">
+            <!-- Amazon Card -->
+            <div class="merchant-card">
+                <h2 class="text-xl font-semibold mb-2">
+                    <span class="brand-amazon">Amazon</span> Electronics
+                </h2>
+                <p class="text-gray-600 mb-6">
+                    Buy everyday tech items and try WingsPay on moderate basket sizes.
+                </p>
+                <button class="btn-amazon" onclick="goToMerchant('amazon')">
+                    Go to Amazon Checkout
+                </button>
+            </div>
+
+            <!-- Wayfair Card -->
+            <div class="merchant-card">
+                <h2 class="text-xl font-semibold mb-2">
+                    <span class="brand-wayfair">Wayfair</span> Premium Furniture
+                </h2>
+                <p class="text-gray-600 mb-6">
+                    Purchase a high-end couch ($500-$1000 range) and see adaptive WingsPay terms.
+                </p>
+                <button class="btn-wayfair" onclick="goToMerchant('wayfair')">
+                    Go to Wayfair Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="merchant-selection.js"></script>
+</body>
+</html>
