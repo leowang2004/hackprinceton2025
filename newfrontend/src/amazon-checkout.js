@@ -55,12 +55,70 @@ const API_OPTIONS = [
     }
 ];
 
-// Payment Plans Configuration
-const PAYMENT_PLANS = [
+// Order Total (from cart)
+const ORDER_TOTAL = 299.99;
+
+// Payment Plans Configuration (will be updated dynamically from backend)
+let PAYMENT_PLANS = [
     { months: 3, rate: 0, monthly: 99.99 },
     { months: 6, rate: 5.99, monthly: 51.25 },
     { months: 12, rate: 9.99, monthly: 27.50 }
 ];
+
+// Backend API Configuration
+const BACKEND_API_URL = 'http://localhost:3000';
+
+// Fetch credit score and lending offer from backend
+async function fetchCreditScore() {
+    try {
+        const response = await fetch(`${BACKEND_API_URL}/api/get-credit-score`);
+        if (!response.ok) {
+            console.error('Failed to fetch credit score:', response.statusText);
+            return null;
+        }
+        const data = await response.json();
+        console.log('Credit Score Data:', data);
+        
+        // Update payment plans based on backend offer and ORDER_TOTAL
+        if (data.lendingOffer && data.lendingOffer.status === 'Approved') {
+            const maxAmount = data.lendingOffer.maxAmount;
+            
+            // Check if ORDER_TOTAL exceeds approved amount
+            if (ORDER_TOTAL > maxAmount) {
+                console.log('Order total exceeds approved amount');
+                return { ...data, lendingOffer: { ...data.lendingOffer, status: 'Declined', message: 'Order amount exceeds your approved limit' }};
+            }
+            
+            // Calculate interest-free BNPL plans for the actual order total
+            // Standard BNPL: Pay in 4, 6, or 12 months with 0% interest if paid on time
+            PAYMENT_PLANS = [
+                { 
+                    months: 4, 
+                    rate: 0, // 0% APR if paid on time
+                    monthly: ORDER_TOTAL / 4 
+                },
+                { 
+                    months: 6, 
+                    rate: 0, // 0% APR if paid on time
+                    monthly: ORDER_TOTAL / 6
+                },
+                { 
+                    months: 12, 
+                    rate: 0, // 0% APR if paid on time
+                    monthly: ORDER_TOTAL / 12
+                }
+            ];
+            
+            return data;
+        } else {
+            console.log('Credit not approved:', data.lendingOffer?.message);
+            return data;
+        }
+    } catch (error) {
+        console.error('Error fetching credit score:', error);
+        return null;
+    }
+}
 
 // Utility Functions
 function render() {
@@ -208,7 +266,7 @@ function renderCheckout() {
                                 </svg>
                                 <div class="text-sm text-blue-900">
                                     <strong>Why choose WingsPay?</strong>
-                                    <p class="mt-1 text-blue-800">Get instant approval, flexible payment plans, and better rates by verifying your accounts.</p>
+                                    <p class="mt-1 text-blue-800">Split your $299.99 purchase into 4 interest-free payments of $75. No hidden fees when paid on time!</p>
                                 </div>
                             </div>
                         </div>
@@ -360,9 +418,7 @@ function renderApiLoginModal() {
 
 // Payment Plans Modal
 function renderPaymentPlansModal() {
-    const baseRate = 15.99;
     const linkedCount = state.linkedApis.length;
-    const discount = linkedCount * 2;
 
     return `
         <div class="modal-overlay" onclick="handleOverlayClick(event)">
@@ -376,7 +432,7 @@ function renderPaymentPlansModal() {
                             </svg>
                         </button>
                     </div>
-                    <p class="text-slate-600">Select a payment schedule that works for you</p>
+                    <p class="text-slate-600">Select a payment schedule that works for you. All plans are interest-free when paid on time!</p>
                 </div>
 
                 ${linkedCount >= 2 ? `
@@ -386,8 +442,8 @@ function renderPaymentPlansModal() {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <div>
-                                <div class="font-medium text-emerald-900 mb-1">Improved rates unlocked!</div>
-                                <div class="text-emerald-700 text-sm">Based on your linked accounts, you qualify for up to $5,000 in WingsPay credit</div>
+                                <div class="font-medium text-emerald-900 mb-1">Credit approved!</div>
+                                <div class="text-emerald-700 text-sm">You're approved for up to $${ORDER_TOTAL.toFixed(2)} in interest-free financing</div>
                             </div>
                         </div>
                     </div>
@@ -395,7 +451,6 @@ function renderPaymentPlansModal() {
 
                 <div class="space-y-3 mb-6">
                     ${PAYMENT_PLANS.map((plan, index) => {
-                        const adjustedRate = plan.rate > 0 ? Math.max(0, plan.rate - discount) : 0;
                         return `
                             <div class="border-2 ${state.selectedPlan === index ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200'} rounded-lg p-4 cursor-pointer hover:border-slate-300 transition-all" onclick="selectPlan(${index})">
                                 <div class="flex items-center justify-between">
@@ -403,12 +458,13 @@ function renderPaymentPlansModal() {
                                         <div class="flex items-center gap-2 mb-2">
                                             <span class="font-semibold text-lg">${plan.months} monthly payments</span>
                                             ${index === 0 ? '<span class="badge badge-success">Most Popular</span>' : ''}
-                                            ${linkedCount >= 2 && adjustedRate < plan.rate ? '<span class="badge" style="background: #fbbf24; color: #000">Rate Improved</span>' : ''}
                                         </div>
                                         <div class="text-2xl font-bold text-indigo-600 mb-1">$${plan.monthly.toFixed(2)}/mo</div>
                                         <div class="text-slate-600 text-sm">
-                                            ${adjustedRate === 0 ? 'Interest-free' : `${adjustedRate.toFixed(2)}% APR`}
-                                            ${linkedCount >= 2 && adjustedRate < plan.rate ? ` <span class="line-through text-slate-400">${plan.rate.toFixed(2)}%</span>` : ''}
+                                            0% APR - Interest-free when paid on time
+                                        </div>
+                                        <div class="text-slate-500 text-xs mt-1">
+                                            Total: $${(plan.monthly * plan.months).toFixed(2)} (${plan.months} × $${plan.monthly.toFixed(2)})
                                         </div>
                                     </div>
                                     <div>
@@ -431,7 +487,7 @@ function renderPaymentPlansModal() {
                 </button>
 
                 <p class="text-xs text-center text-slate-500 mt-4">
-                    By selecting a plan, you agree to WingsPay's payment terms. Your first payment is due in 2 weeks.
+                    By selecting a plan, you agree to WingsPay's terms. 0% APR applies when payments are made on time. Late fees may apply for missed payments.
                 </p>
             </div>
         </div>
@@ -538,8 +594,22 @@ function getDateTwoWeeksFromNow() {
 }
 
 // Event Handlers
-function handlePaymentSelect() {
-    // Since account is already verified, go directly to API linking
+async function handlePaymentSelect() {
+    // Fetch credit score from backend before showing API linking
+    console.log('Fetching credit score from backend...');
+    const creditData = await fetchCreditScore();
+    
+    if (creditData) {
+        console.log('Credit Score:', creditData.creditScore);
+        console.log('Lending Offer:', creditData.lendingOffer);
+        
+        if (creditData.lendingOffer && creditData.lendingOffer.status === 'Declined') {
+            alert(`Sorry, FlexPay not available at this time.\n\n${creditData.lendingOffer.message}\n\nCredit Score: ${creditData.creditScore}`);
+            return;
+        }
+    }
+    
+    // Show API linking modal
     showModal('apiLinking');
 }
 

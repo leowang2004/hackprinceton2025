@@ -66,58 +66,68 @@ app.get('/api/get-credit-score', async (req, res) => {
     // --- END KNOT API CALLS ---
 
 
-    // --- SIMULATION (Reading from file as requested) ---
-    console.log("Simulating API call by reading from 'dummydata.json'...");
-    const dummyDataPath = path.join(__dirname, 'dummydata.json');
-    const fileData = await fs.readFile(dummyDataPath, 'utf8');
-    const raw = JSON.parse(fileData);
-
-    // The dummy file structure contains { merchant, transactions, ... } but NOT bank-style accounts.
-    // We adapt it to the shape expected by the scoring logic.
-    const transactions = (raw.transactions || []).map(order => {
-      const total = Number(order?.price?.total) || 0;
-      // Scoring logic treats positive amounts as spending; negative as income.
-      return {
-        amount: total, // treat all orders as spending (positive)
-        description: `${order.order_status || 'ORDER'} ${order.id}`,
-        datetime: order?.datetime
-      };
-    });
-
-    // Synthesize a single account so downstream logic doesn't fail.
-    // You can later replace this with real account data from Knot.
-    const accounts = [
-      {
-        subtype: 'checking',
-        name: 'Simulated Account',
-        balance: { current: 5000 } // arbitrary current balance for scoring context
-      }
-    ];
+    // --- COMPREHENSIVE BANK DATA SIMULATION ---
+    console.log("Loading comprehensive bank data: transactions, bills, deposits, and loans...");
     
-    // Optional: include total overdue debt in dummydata.json as { "overdueDebt": 250 }
-    const overdueDebt = Number(raw.overdueDebt) || 0;
-    // --- END SIMULATION ---
-
-
-    // 3. Process Data (This logic is the same as before)
-    const primaryAccount = accounts.find(a => a.subtype === 'checking') || accounts[0];
-    const currentBalance = primaryAccount.balance.current;
+    // 1. Load merchant transaction data
+    const transactionsPath = path.join(__dirname, 'dummydata.json');
+    const transactionsFile = await fs.readFile(transactionsPath, 'utf8');
+    const transactionsRaw = JSON.parse(transactionsFile);
     
-  // 4. Calculate Score (spending-only heuristic)
-  const score = calculateCreditScore(transactions, currentBalance);
+    const transactions = (transactionsRaw.transactions || []).map(order => ({
+      amount: Number(order?.price?.total) || 0,
+      description: `${order.order_status || 'ORDER'} ${order.id}`,
+      datetime: order?.datetime,
+      type: 'merchant_purchase'
+    }));
 
-  // 5. Determine Lending Offer (liquid, spending-only, considers overdue debt if provided)
-  const lendingOffer = getLendingOffer(transactions, currentBalance, overdueDebt);
+    // 2. Load bill payment data (credit cards, utilities, etc.)
+    const billsPath = path.join(__dirname, 'dummybill.json');
+    const billsFile = await fs.readFile(billsPath, 'utf8');
+    const bills = JSON.parse(billsFile);
+    
+    // 3. Load deposit data (income, paychecks)
+    const depositsPath = path.join(__dirname, 'dummydeposit.json');
+    const depositsFile = await fs.readFile(depositsPath, 'utf8');
+    const deposits = JSON.parse(depositsFile);
+    
+    // 4. Load loan data (existing debt obligations)
+    const loansPath = path.join(__dirname, 'dummyloan.json');
+    const loansFile = await fs.readFile(loansPath, 'utf8');
+    const loans = JSON.parse(loansFile);
+
+    // Calculate current balance based on deposits
+    const totalDeposits = deposits.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+    const currentBalance = totalDeposits * 2.5; // Estimate: deposits represent ~40% of balance
+    
+    // Calculate overdue debt from pending bills and loans
+    const pendingBills = bills.filter(b => b.status === 'pending');
+    const totalBillsOwed = pendingBills.reduce((sum, b) => sum + Number(b.payment_amount || 0), 0);
+    const totalLoansOwed = loans.reduce((sum, l) => sum + Number(l.payment_amount || 0), 0);
+    const overdueDebt = totalBillsOwed + totalLoansOwed;
+    
+    // --- END COMPREHENSIVE BANK DATA SIMULATION ---
+
+    
+  // 4. Calculate Comprehensive Credit Score
+  const score = calculateCreditScore(transactions, currentBalance, bills, deposits, loans);
+
+  // 5. Determine Lending Offer (considers all financial factors)
+  const lendingOffer = getLendingOffer(transactions, currentBalance, overdueDebt, deposits, bills);
 
     // 6. Return the result
     res.json({
       creditScore: score,
       lendingOffer,
       analysis: {
-        accountName: primaryAccount.name,
-        currentBalance,
+        accountBalance: currentBalance,
         totalTransactionsAnalyzed: transactions.length,
-        source: 'dummydata.json (simulation)',
+        totalBillsOwed: totalBillsOwed,
+        totalLoansOwed: totalLoansOwed,
+        totalOverdueDebt: overdueDebt,
+        monthlyDeposits: deposits.length,
+        totalDepositAmount: totalDeposits,
+        source: 'Comprehensive bank data (transactions, bills, deposits, loans)',
         metrics: lendingOffer.metrics,
       },
     });
@@ -125,7 +135,7 @@ app.get('/api/get-credit-score', async (req, res) => {
   } catch (error) {
     console.error('Error getting credit score:', error.message);
     if (error.code === 'ENOENT') {
-      res.status(500).json({ error: "Failed to read 'dummydata.json'. Make sure the file exists." });
+      res.status(500).json({ error: "Failed to read bank data files. Make sure all dummy files exist." });
     } else {
       res.status(500).json({ error: 'Failed to process financial data.' });
     }
@@ -135,86 +145,187 @@ app.get('/api/get-credit-score', async (req, res) => {
 // --- Start Server ---
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
-  console.log('Ready to calculate credit scores from dummydata.json.');
+  console.log('Ready to calculate credit scores using comprehensive bank data.');
   console.log(`Test endpoint: http://localhost:${PORT}/api/get-credit-score`);
 });
 
 
-// --- Business Logic Functions (Unchanged) ---
+// --- Business Logic Functions ---
 
 /**
- * Computes a custom credit score based on transaction history.
- * This is a simplified model. You can make this as complex as you need.
- * * @param {Array} transactions - Array of transaction objects from Knot API.
- * @param {number} currentBalance - The user's current account balance.
- * @returns {number} A score between 300 and 850.
+ * Computes a comprehensive credit score based on:
+ * - Transaction history (merchant purchases)
+ * - Bill payment history and obligations
+ * - Deposit history (income indicators)
+ * - Loan/debt obligations
+ * - Current account balance
+ * 
+ * More generous scoring that rewards transaction history and forgives debt.
+ * 
+ * @param {Array} transactions - Merchant purchase transactions
+ * @param {number} currentBalance - Current account balance
+ * @param {Array} bills - Bill payment data
+ * @param {Array} deposits - Deposit/income data
+ * @param {Array} loans - Loan/debt data
+ * @returns {number} A score between 300 and 850
  */
-function calculateCreditScore(transactions, currentBalance) {
+function calculateCreditScore(transactions, currentBalance, bills = [], deposits = [], loans = []) {
   if (!transactions || transactions.length === 0) return 300;
 
+  // 1. TRANSACTION SPENDING ANALYSIS (30% weight)
   const monthly = aggregateMonthly(transactions);
   const avgMonthlySpend = monthly.avg;
-  const vol = monthly.volatility; // coefficient of variation (sd/avg)
+  const spendVolatility = monthly.volatility;
   const freqPerMonth = monthly.avgCount;
   const maxSingle = monthly.maxSingle;
 
-  // Capacity proxy: lower spend, lower volatility, reasonable frequency, smaller max single purchase
-  const spendScale = 4000;
-  const base = clamp(1 - (avgMonthlySpend / spendScale), 0, 1);
-  const volatilityScore = clamp(1 - vol, 0, 1);
-  const freqScore = clamp(freqPerMonth / 40, 0, 1); // cap at ~40 orders/mo
-  const singlePurchasePenalty = clamp(1 - (maxSingle / Math.max(100, avgMonthlySpend * 0.8)), 0, 1);
+  // Moderate scoring - reward activity but don't over-reward
+  const spendActivityScore = clamp(avgMonthlySpend / 1500, 0, 1); // Cap at $1500/mo
+  const volatilityPenalty = spendVolatility > 0.5 ? 0.7 : spendVolatility > 0.3 ? 0.85 : 1.0;
+  const spendScore = spendActivityScore * volatilityPenalty;
 
-  const capacityScore = clamp(0.45 * base + 0.30 * volatilityScore + 0.15 * freqScore + 0.10 * singlePurchasePenalty, 0, 1);
+  // 2. INCOME ANALYSIS from deposits (25% weight)
+  const totalDeposits = deposits.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+  const avgMonthlyIncome = totalDeposits / Math.max(1, deposits.length);
+  const depositConsistency = deposits.length >= 3 ? 0.9 : deposits.length >= 2 ? 0.7 : 0.5;
+  
+  // Realistic income scoring
+  const incomeBoost = avgMonthlyIncome > 0 ? clamp(avgMonthlyIncome / 800, 0, 0.8) : 0.2;
+  const incomeScore = incomeBoost * 0.5 + depositConsistency * 0.5;
 
-  const baseScore = 300 + capacityScore * 550;
-  // Bonus for having some cash balance
-  const balanceBonus = currentBalance > 1000 ? (currentBalance > 5000 ? 40 : 20) : 0;
-  return Math.min(Math.max(Math.round(baseScore + balanceBonus), 300), 850);
+  // 3. BILL PAYMENT RELIABILITY (20% weight)
+  const totalBills = bills.length;
+  const pendingBills = bills.filter(b => b.status === 'pending').length;
+  const paidBills = bills.filter(b => b.status === 'completed' || b.status === 'paid').length;
+  
+  // Realistic bill scoring - pending bills do matter
+  const billPaymentRatio = totalBills > 0 ? paidBills / totalBills : 0.6; // Default to 0.6 if no data
+  const pendingBillPenalty = pendingBills > 4 ? 0.7 : pendingBills > 2 ? 0.85 : 1.0;
+  const billScore = billPaymentRatio * pendingBillPenalty;
+
+  // 4. DEBT BURDEN (15% weight)
+  const totalLoanPayments = loans.reduce((sum, l) => sum + Number(l.payment_amount || 0), 0);
+  const totalBillPayments = bills.reduce((sum, b) => sum + Number(b.payment_amount || 0), 0);
+  const monthlyDebtObligation = totalLoanPayments + totalBillPayments;
+  
+  // Realistic debt scoring - high debt is concerning
+  const debtScore = monthlyDebtObligation < 1000 ? 0.9 : 
+                    monthlyDebtObligation < 2000 ? 0.7 : 
+                    monthlyDebtObligation < 3500 ? 0.5 : 0.3;
+
+  // 5. BALANCE CHECK (10% weight)
+  const balanceScore = currentBalance > 500 ? clamp(currentBalance / 1500, 0, 0.8) : 
+                       currentBalance > 200 ? 0.5 : 0.3;
+
+  // WEIGHTED COMPOSITE SCORE
+  const compositeScore = 
+    spendScore * 0.30 +      
+    incomeScore * 0.25 +     
+    billScore * 0.20 +       
+    debtScore * 0.15 +       
+    balanceScore * 0.10;     
+
+  // Map to 500-800 range (more realistic)
+  const baseScore = 500 + compositeScore * 300;
+  
+  // Moderate bonuses (reduced from before)
+  let bonuses = 0;
+  if (transactions.length >= 5) bonuses += 15; // Reward significant history
+  if (currentBalance > 800) bonuses += 12;
+  if (deposits.length >= 3) bonuses += 10;
+  if (avgMonthlySpend > 800 && spendVolatility < 0.4) bonuses += 8; // Reward stable high spending
+  
+  // Penalties for concerning factors
+  let penalties = 0;
+  if (pendingBills > 5) penalties += 20;
+  if (monthlyDebtObligation > 3000) penalties += 15;
+  if (avgMonthlyIncome > 0 && monthlyDebtObligation > avgMonthlyIncome * 2) penalties += 25;
+  
+  const finalScore = Math.min(Math.max(Math.round(baseScore + bonuses - penalties), 500), 800);
+  
+  return finalScore;
 }
 
 /**
- * Determines a maximum lending amount based on the computed score.
- * * @param {number} score - The custom credit score.
- * @returns {object} An object describing the lending offer.
+ * Determines maximum lending amount and terms based on comprehensive financial profile.
+ * FLUID ALGORITHM - loan amount directly proportional to credit score.
+ * Score 500-550: ~$2500, Score 650-750: ~$4000-6000, Score 700+: ~$7000+
  */
-function getLendingOffer(transactions, currentBalance, overdueDebt = 0) {
+function getLendingOffer(transactions, currentBalance, overdueDebt = 0, deposits = [], bills = []) {
+  // First calculate the credit score to use as basis
+  const creditScore = calculateCreditScore(transactions, currentBalance, bills, deposits, []);
+  
   const monthly = aggregateMonthly(transactions);
   const avgMonthlySpend = monthly.avg;
   const vol = monthly.volatility;
-  const freqPerMonth = monthly.avgCount;
-  const maxSingle = monthly.maxSingle;
+  
+  // Calculate income metrics
+  const totalDeposits = deposits.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+  const avgMonthlyIncome = totalDeposits / Math.max(1, deposits.length);
+  const totalBillPayments = bills.reduce((sum, b) => sum + Number(b.payment_amount || 0), 0);
+  
+  // FLUID LOAN AMOUNT CALCULATION
+  // Map credit score (500-800) to loan amount ($2000-$8000)
+  // Formula: Linear interpolation with floor at 500 and cap at 800
+  const scoreNormalized = clamp((creditScore - 500) / 300, 0, 1); // 0 at 500, 1 at 800
+  
+  // Base loan amount: $2000 at score 500, up to $8000 at score 800
+  const baseLoanAmount = 2000 + (scoreNormalized * 6000);
+  
+  // Apply spending multiplier (reward active spenders)
+  const spendingMultiplier = clamp(avgMonthlySpend / 1200, 0.9, 1.2); // 0.9x to 1.2x
+  
+  // Apply balance multiplier (reward higher balances)
+  const balanceMultiplier = currentBalance > 1000 ? 1.15 : 
+                           currentBalance > 500 ? 1.08 : 
+                           currentBalance > 300 ? 1.02 : 1.0;
+  
+  // Calculate final max amount
+  let maxAmount = baseLoanAmount * spendingMultiplier * balanceMultiplier;
+  
+  // Subtract overdue debt (but don't be too harsh)
+  maxAmount = Math.max(0, maxAmount - (overdueDebt * 0.4)); // 40% penalty for debt
+  
+  // Round to nearest 100
+  maxAmount = Math.round(maxAmount / 100) * 100;
+  
+  // FLUID TERM CALCULATION (4-12 months based on score)
+  // Higher score = longer terms available
+  let termMonths;
+  if (creditScore >= 750) {
+    termMonths = 12;
+  } else if (creditScore >= 700) {
+    termMonths = 10;
+  } else if (creditScore >= 650) {
+    termMonths = 9;
+  } else if (creditScore >= 600) {
+    termMonths = 7;
+  } else if (creditScore >= 550) {
+    termMonths = 6;
+  } else {
+    termMonths = 4;
+  }
+  
+  // Adjust term for volatility
+  if (vol > 0.8) termMonths = Math.max(4, termMonths - 2);
+  
+  // Calculate monthly payment
+  const recommendedMonthlyPayment = roundToTwo(maxAmount / termMonths);
+  
+  // FLUID INTEREST RATE (5% - 18% based on score)
+  // Score 800: 5%, Score 500: 18%
+  const interestRatePct = roundToOne(18 - (scoreNormalized * 13));
 
-  const spendScale = 4000;
-  const base = clamp(1 - (avgMonthlySpend / spendScale), 0, 1);
-  const volatilityScore = clamp(1 - vol, 0, 1);
-  const freqScore = clamp(freqPerMonth / 40, 0, 1);
-  const singlePurchasePenalty = clamp(1 - (maxSingle / Math.max(100, avgMonthlySpend * 0.8)), 0, 1);
-  const capacityScore = clamp(0.5 * base + 0.3 * volatilityScore + 0.15 * freqScore + 0.05 * singlePurchasePenalty, 0, 1);
-  const recommendedMonthlyPayment = roundToTwo(Math.max(0, capacityScore) * 0.12 * avgMonthlySpend);
-
-  // Term based on volatility and capacity
-  let termMonths = 6;
-  if (capacityScore >= 0.75 && vol <= 0.3) termMonths = 12;
-  else if (capacityScore >= 0.55 && vol <= 0.6) termMonths = 9;
-  else if (capacityScore < 0.35 || vol > 1.0) termMonths = 3;
-
-  let maxAmount = roundToTwo(recommendedMonthlyPayment * termMonths);
-  // Overdue debt directly reduces available amount
-  maxAmount = Math.max(0, maxAmount - overdueDebt);
-
-  // Interest rate inversely proportional to capacityScore (range ~7%..24%)
-  const interestRatePct = roundToOne(24 - capacityScore * 17);
-
-  // Decision: require minimum capacity and that overdueDebt is not dominant
-  const approved = capacityScore >= 0.4 && overdueDebt <= maxAmount * 0.25;
-
+  // APPROVAL DECISION
+  // Approve if: score >= 500 AND maxAmount >= 1500 (after debt penalty)
+  const approved = creditScore >= 500 && maxAmount >= 1500;
+  
   const offer = approved
     ? {
         status: 'Approved',
         maxAmount: Math.round(maxAmount),
         interestRate: `${interestRatePct}% APR`,
-        message: 'FlexPay approved based on your spending stability.',
+        message: `FlexPay approved! You qualify for up to $${Math.round(maxAmount).toLocaleString()}.`,
         termMonths,
         recommendedMonthlyPayment,
       }
@@ -222,9 +333,9 @@ function getLendingOffer(transactions, currentBalance, overdueDebt = 0) {
         status: 'Declined',
         maxAmount: 0,
         interestRate: 'N/A',
-        message: overdueDebt > 0
-          ? 'FlexPay declined due to existing overdue balance. Please resolve it and try again.'
-          : 'FlexPay declined based on recent spending patterns. Try again later.',
+        message: creditScore < 500 
+          ? 'Credit score below minimum threshold. Build transaction history and try again.'
+          : 'Unable to approve at this time. Please reduce outstanding debt.',
         termMonths: 0,
         recommendedMonthlyPayment: 0,
       };
@@ -232,13 +343,20 @@ function getLendingOffer(transactions, currentBalance, overdueDebt = 0) {
   return {
     ...offer,
     metrics: {
+      creditScore,
       avgMonthlySpend: roundToTwo(avgMonthlySpend),
-      monthlyStdDev: roundToTwo(monthly.sd),
+      avgMonthlyIncome: roundToTwo(avgMonthlyIncome),
+      monthlyDebtObligation: roundToTwo(totalBillPayments),
       volatility: roundToThree(vol),
-      purchaseFreqPerMonth: roundToTwo(freqPerMonth),
-      maxSinglePurchase: roundToTwo(maxSingle),
+      purchaseFreqPerMonth: roundToTwo(monthly.avgCount),
+      maxSinglePurchase: roundToTwo(monthly.maxSingle),
       overdueDebt,
-      capacityScore: roundToThree(capacityScore),
+      currentBalance,
+      depositCount: deposits.length,
+      billCount: bills.length,
+      scoreNormalized: roundToThree(scoreNormalized),
+      spendingMultiplier: roundToTwo(spendingMultiplier),
+      balanceMultiplier: roundToTwo(balanceMultiplier)
     }
   };
 }

@@ -1,0 +1,42 @@
+[
+    {
+        "_id": "690f8ef508f7513c4ad89fdb",
+        "medium": "balance",
+        "amount": 200,
+        "transaction_date": "2025-11-08",
+        "status": "cancelled",
+        "description": "string",
+        "payee_id": "690f8d1708f7513c4ad89fda",
+        "type": "deposit"
+    },
+    {
+        "_id": "690f8f2908f7513c4ad89fdd",
+        "medium": "balance",
+        "amount": 200,
+        "transaction_date": "2025-10-08",
+        "status": "cancelled",
+        "description": "string",
+        "payee_id": "690f8d1708f7513c4ad89fda",
+        "type": "deposit"
+    },
+    {
+        "_id": "690f8f3308f7513c4ad89fde",
+        "medium": "balance",
+        "amount": 160,
+        "transaction_date": "2025-09-08",
+        "status": "cancelled",
+        "description": "string",
+        "payee_id": "690f8d1708f7513c4ad89fda",
+        "type": "deposit"
+    },
+    {
+        "_id": "690f8f3b08f7513c4ad89fdf",
+        "medium": "balance",
+        "amount": 220,
+        "transaction_date": "2025-08-08",
+        "status": "cancelled",
+        "description": "string",
+        "payee_id": "690f8d1708f7513c4ad89fda",
+        "type": "deposit"
+    }
+]
