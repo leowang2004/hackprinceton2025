@@ -1,6 +1,8 @@
 import { ArrowLeft, CreditCard, Wallet, Zap, Lock, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { usePayment } from '../contexts/PaymentContext';
+import { formatCurrency } from '../services/api';
 
 interface ModernCheckoutProps {
   onSelectWingsPay: () => void;
@@ -8,6 +10,18 @@ interface ModernCheckoutProps {
 }
 
 export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps) {
+  const { 
+    cartTotal, 
+    creditScore, 
+    maxCreditLimit, 
+    approved, 
+    loading,
+    paymentPlans,
+    declineReason 
+  } = usePayment();
+
+  const monthlyPayment = approved && paymentPlans.length > 0 ? paymentPlans[0].monthly : 0;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {/* Header */}
@@ -75,10 +89,23 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
                           </span>
                         </div>
                         <div className="text-sm text-slate-600">
-                          4 interest-free payments of $209.79
+                          {loading ? (
+                            'Loading payment options...'
+                          ) : approved ? (
+                            `4 interest-free payments of ${formatCurrency(monthlyPayment)}`
+                          ) : (
+                            <span className="text-amber-600">
+                              {declineReason || 'Not eligible at this time'}
+                            </span>
+                          )}
                         </div>
                         <div className="text-xs text-indigo-600 mt-1">
-                          ✦ Pre-approved • 0% APR • No hidden fees
+                          ✦ {approved ? 'Pre-approved' : 'Check eligibility'} • 0% APR • No hidden fees
+                          {!loading && !approved && maxCreditLimit > 0 && (
+                            <div className="text-xs text-slate-500 mt-1">
+                              Max credit: ${maxCreditLimit.toFixed(2)} (Cart: ${cartTotal.toFixed(2)})
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -185,7 +212,7 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
 
               <div className="flex justify-between mb-6">
                 <span className="text-xl">Total</span>
-                <span className="text-3xl">$839.16</span>
+                <span className="text-3xl">{formatCurrency(cartTotal)}</span>
               </div>
 
               <div className="p-4 bg-slate-50 rounded-xl text-center text-sm text-slate-600">

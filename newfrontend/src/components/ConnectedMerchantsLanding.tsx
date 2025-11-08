@@ -1,10 +1,19 @@
-import { Store, ShoppingBag, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Store, ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, Sparkles, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from './ui/button';
+import { AddConnectionDialog } from './AddConnectionDialog';
+import { usePayment } from '../contexts/PaymentContext';
+import { formatCurrency } from '../services/api';
 
 interface ConnectedMerchantsLandingProps {
   onMerchantSelect: (merchant: string) => void;
+  onViewCreditScore: () => void;
 }
 
-export function ConnectedMerchantsLanding({ onMerchantSelect }: ConnectedMerchantsLandingProps) {
+export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore }: ConnectedMerchantsLandingProps) {
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const { creditScore, maxCreditLimit, loading, connectedMerchantsCount } = usePayment();
+
   const merchants = [
     {
       id: 'amazon',
@@ -70,13 +79,32 @@ export function ConnectedMerchantsLanding({ onMerchantSelect }: ConnectedMerchan
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-4 gap-6 mb-12">
+          {/* Credit Score Card - Featured */}
+          <button
+            onClick={onViewCreditScore}
+            className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 border border-indigo-500 text-white hover:shadow-2xl hover:shadow-indigo-200 transition-all duration-300 group cursor-pointer"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                <span className="text-sm opacity-90">WingsPay Score</span>
+              </div>
+              <ArrowRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="text-5xl mb-2">{loading ? '...' : creditScore}</div>
+            <div className="text-sm opacity-90 flex items-center gap-1">
+              <TrendingUp className="h-4 w-4" />
+              <span>+12 this month</span>
+            </div>
+          </button>
+
           <div className="bg-white rounded-2xl p-6 border border-slate-200">
-            <div className="text-3xl mb-1">4</div>
+            <div className="text-3xl mb-1">{loading ? '...' : connectedMerchantsCount}</div>
             <div className="text-slate-600">Connected Stores</div>
           </div>
           <div className="bg-white rounded-2xl p-6 border border-slate-200">
-            <div className="text-3xl mb-1">$5,000</div>
+            <div className="text-3xl mb-1">{loading ? '...' : formatCurrency(maxCreditLimit)}</div>
             <div className="text-slate-600">Available Credit</div>
           </div>
           <div className="bg-white rounded-2xl p-6 border border-slate-200">
@@ -108,6 +136,23 @@ export function ConnectedMerchantsLanding({ onMerchantSelect }: ConnectedMerchan
             </button>
           ))}
         </div>
+
+        {/* Add Connection Button */}
+        <div className="mt-12">
+          <Button
+            onClick={() => setShowAddDialog(true)}
+            className="h-14 px-8 text-lg bg-gradient-to-br from-indigo-600 to-purple-600 text-white hover:shadow-2xl hover:shadow-indigo-200 transition-all duration-300 hover:scale-105"
+          >
+            <Plus className="h-6 w-6 mr-2" />
+            Add Connection
+          </Button>
+        </div>
+
+        {/* Add Connection Dialog */}
+        <AddConnectionDialog
+          open={showAddDialog}
+          onClose={() => setShowAddDialog(false)}
+        />
 
         {/* Info Banner */}
         <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8 border border-indigo-100">

@@ -1,6 +1,8 @@
 import { ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { usePayment } from '../contexts/PaymentContext';
+import { formatCurrency } from '../services/api';
 
 interface ShoppingCartProps {
   onProceedToCheckout: () => void;
@@ -8,6 +10,9 @@ interface ShoppingCartProps {
 }
 
 export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps) {
+  const { cartTotal, paymentPlans, approved } = usePayment();
+  const monthlyPayment = approved && paymentPlans.length > 0 ? paymentPlans[0].monthly : 0;
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -123,7 +128,7 @@ export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps)
 
               <div className="flex justify-between mb-6">
                 <span className="text-xl">Total</span>
-                <span className="text-2xl">$839.16</span>
+                <span className="text-2xl">{formatCurrency(cartTotal)}</span>
               </div>
 
               <Button
@@ -136,7 +141,7 @@ export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps)
               <div className="mt-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
                 <div className="text-sm text-indigo-900 mb-1">💳 Pay with WingsPay</div>
                 <div className="text-sm text-indigo-700">
-                  Split into 4 payments of <span className="font-medium">$209.79</span>
+                  Split into 4 payments of <span className="font-medium">{approved && monthlyPayment > 0 ? formatCurrency(monthlyPayment) : 'checking...'}</span>
                 </div>
               </div>
 
