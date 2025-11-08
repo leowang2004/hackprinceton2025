@@ -11,7 +11,8 @@ interface ModernCheckoutProps {
 
 export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps) {
   const { 
-    cartTotal, 
+    cartTotal,
+    cartItems,
     creditScore, 
     maxCreditLimit, 
     approved, 
@@ -21,6 +22,10 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
   } = usePayment();
 
   const monthlyPayment = approved && paymentPlans.length > 0 ? paymentPlans[0].monthly : 0;
+  
+  // Calculate subtotal (before tax)
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const tax = cartTotal - subtotal; // Tax is the difference
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
@@ -166,39 +171,28 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
 
               {/* Items Preview */}
               <div className="space-y-4 mb-6 pb-6 border-b border-slate-200">
-                <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
-                    <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1604780032295-9f8186eede96?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb255JTIwd2lyZWxlc3MlMjBoZWFkcGhvbmVzJTIwYmxhY2t8ZW58MXx8fHwxNzYyNjIyNzUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                      alt="Product"
-                      className="w-full h-full object-cover"
-                    />
+                {cartItems.map((item) => (
+                  <div key={item.id} className="flex gap-3">
+                    <div className="w-16 h-16 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
+                      <ImageWithFallback
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 text-sm">
+                      <div className="mb-1">{item.name}</div>
+                      <div className="text-slate-600">{formatCurrency(item.price * item.quantity)}</div>
+                    </div>
                   </div>
-                  <div className="flex-1 text-sm">
-                    <div className="mb-1">Sony WH-1000XM5</div>
-                    <div className="text-slate-600">$348.00</div>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
-                    <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1668760180303-fcfe2b899e20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFydCUyMHdhdGNoJTIwdGVjaG5vbG9neXxlbnwxfHx8fDE3NjI1OTA3NjR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                      alt="Product"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 text-sm">
-                    <div className="mb-1">Apple Watch Series 9</div>
-                    <div className="text-slate-600">$429.00</div>
-                  </div>
-                </div>
+                ))}
               </div>
 
               {/* Price Breakdown */}
               <div className="space-y-3 mb-6 pb-6 border-b border-slate-200">
                 <div className="flex justify-between text-slate-600">
                   <span>Subtotal</span>
-                  <span>$777.00</span>
+                  <span>{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Shipping</span>
@@ -206,7 +200,7 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Tax</span>
-                  <span>$62.16</span>
+                  <span>{formatCurrency(tax)}</span>
                 </div>
               </div>
 

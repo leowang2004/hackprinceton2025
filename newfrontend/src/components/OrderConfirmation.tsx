@@ -9,11 +9,15 @@ interface OrderConfirmationProps {
 }
 
 export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
-  const { cartTotal, selectedPlan } = usePayment();
+  const { cartTotal, cartItems, selectedPlan } = usePayment();
   
   // Calculate payment amounts
   const monthlyPayment = selectedPlan ? selectedPlan.monthly : 0;
   const numPayments = selectedPlan ? selectedPlan.termMonths : 4;
+  
+  // Calculate subtotal (before tax)
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const tax = cartTotal - subtotal; // Tax is the difference
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
@@ -96,40 +100,28 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
           <h2 className="text-xl mb-6">Order Items</h2>
           
           <div className="space-y-4 mb-6 pb-6 border-b border-slate-200">
-            <div className="flex gap-4">
-              <div className="w-24 h-24 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
-                <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1604780032295-9f8186eede96?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb255JTIwd2lyZWxlc3MlMjBoZWFkcGhvbmVzJTIwYmxhY2t8ZW58MXx8fHwxNzYyNjIyNzUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                  alt="Sony Headphones"
-                  className="w-full h-full object-cover"
-                />
+            {cartItems.map((item) => (
+              <div key={item.id} className="flex gap-4">
+                <div className="w-24 h-24 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
+                  <ImageWithFallback
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="mb-1">{item.name}</h3>
+                  <p className="text-sm text-slate-600 mb-2">Qty: {item.quantity}</p>
+                  <div className="text-lg">{formatCurrency(item.price * item.quantity)}</div>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="mb-1">Sony WH-1000XM5 Wireless Noise Canceling Headphones</h3>
-                <p className="text-sm text-slate-600 mb-2">Color: Black | Qty: 1</p>
-                <div className="text-lg">$348.00</div>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="w-24 h-24 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
-                <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1668760180303-fcfe2b899e20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFydCUyMHdhdGNoJTIwdGVjaG5vbG9neXxlbnwxfHx8fDE3NjI1OTA3NjR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                  alt="Smart Watch"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="mb-1">Apple Watch Series 9 GPS + Cellular 45mm</h3>
-                <p className="text-sm text-slate-600 mb-2">Color: Midnight | Qty: 1</p>
-                <div className="text-lg">$429.00</div>
-              </div>
-            </div>
+            ))}
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between text-slate-600">
               <span>Subtotal</span>
-              <span>$777.00</span>
+              <span>{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex justify-between text-slate-600">
               <span>Shipping</span>
@@ -137,7 +129,7 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
             </div>
             <div className="flex justify-between text-slate-600">
               <span>Tax</span>
-              <span>$62.16</span>
+              <span>{formatCurrency(tax)}</span>
             </div>
             <div className="h-px bg-slate-200 my-4" />
             <div className="flex justify-between text-xl">
