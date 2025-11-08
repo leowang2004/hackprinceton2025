@@ -7,7 +7,7 @@ A mobile application that calculates alternative credit scores based on Amazon t
 This project consists of two main components:
 
 1. **React Native Mobile App** - Cross-platform app (iOS & Android) with fake Amazon login
-2. **Python Backend** - FastAPI server with Knot API integration and credit score calculation
+2. **Node.js Backend** - Express server with Knot API integration and credit score calculation
 
 ## Features
 
@@ -28,8 +28,8 @@ This project consists of two main components:
            │ HTTP/JSON
            ▼
 ┌─────────────────────┐
-│  Python Backend     │
-│  (FastAPI)          │
+│  Node.js Backend    │
+│  (Express)          │
 └──────────┬──────────┘
            │ REST API
            ▼
@@ -41,16 +41,14 @@ This project consists of two main components:
 
 ## Quick Start
 
-### Backend Setup (Python/FastAPI)
+### Backend Setup (Node.js/Express)
 
 ```bash
 cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+npm install
 cp .env.example .env
 # Edit .env with your Knot API credentials (optional)
-python main.py
+npm start
 ```
 
 The backend will run on `http://localhost:3000`
@@ -132,12 +130,15 @@ hackprinceton2025/
 │   ├── ios/                     # iOS native code
 │   ├── package.json
 │   └── README.md
-├── backend/                     # Python backend server
+├── backend/                     # Node.js backend server
+│   ├── routes/
+│   │   ├── auth.js
+│   │   └── knot.js
 │   ├── services/
-│   │   ├── knot_service.py
-│   │   └── credit_score_service.py
-│   ├── main.py
-│   ├── requirements.txt
+│   │   ├── knotService.js
+│   │   └── creditScoreService.js
+│   ├── server.js
+│   ├── package.json
 │   └── README.md
 └── README.md
 ```
@@ -179,10 +180,9 @@ Retrieve transaction data for user
 - React Native SVG
 
 ### Backend
-- Python 3.8+
-- FastAPI
-- Pydantic (data validation)
-- Uvicorn (ASGI server)
+- Node.js
+- Express.js
+- Axios (HTTP client)
 - Knot API SDK
 
 ## Development Notes

@@ -45,7 +45,7 @@
 
 ```
 Mobile App                Backend                 Knot API
-(React Native)           (Python/FastAPI)
+(React Native)           (Node.js/Express)
     │                        │                        │
     │ POST /api/login        │                        │
     ├───────────────────────>│                        │
@@ -200,11 +200,14 @@ hackprinceton2025/
 │   └── README.md
 │
 ├── 🖥️  backend/
+│   ├── routes/
+│   │   ├── auth.js                      (Login endpoints)
+│   │   └── knot.js                      (Knot API routes)
 │   ├── services/
-│   │   ├── knot_service.py              (Knot integration)
-│   │   └── credit_score_service.py      (Score algorithm)
-│   ├── main.py                          (FastAPI app)
-│   ├── requirements.txt                 (Dependencies)
+│   │   ├── knotService.js               (Knot integration)
+│   │   └── creditScoreService.js        (Score algorithm)
+│   ├── server.js                        (Express server)
+│   ├── package.json                     (Dependencies)
 │   └── README.md
 │
 ├── 📚 KNOT_INTEGRATION.md               (Integration guide)
@@ -227,8 +230,8 @@ hackprinceton2025/
 ┌─────────────────────────────────────────────┐
 │            Backend Layer                    │
 │  ┌─────────────────────────────────────┐   │
-│  │  Python + FastAPI                   │   │
-│  │  - Authentication Endpoints         │   │
+│  │  Node.js + Express                  │   │
+│  │  - Authentication Routes            │   │
 │  │  - Knot API Integration             │   │
 │  │  - Credit Score Service             │   │
 │  └─────────────────────────────────────┘   │
