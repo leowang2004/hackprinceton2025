@@ -1,0 +1,906 @@
+{
+  "merchant": {
+    "id": 36,
+    "name": "Ubereats"
+  },
+  "transactions": [
+    {
+      "id": "851e434c-93cf-48ad-9c10-d197e315b23f",
+      "external_id": "851e434c-93cf-48ad-9c10-d197e315b23f",
+      "datetime": "2024-01-29T14:44:50.592940",
+      "url": "www.ubereats.com/order/851e434c-93cf-48ad-9c10-d197e315b23f",
+      "order_status": "FAILED",
+      "payment_methods": [
+        {
+          "external_id": "2b012b8a-eb26-438a-9628-edb04db60aff",
+          "type": "CARD",
+          "brand": "EBTSNAP",
+          "last_four": "6842",
+          "transaction_amount": "325.19"
+        }
+      ],
+      "price": {
+        "sub_total": "303.92",
+        "adjustments": [
+          {
+            "type": "TAX",
+            "label": "Sales Tax",
+            "amount": "21.27"
+          }
+        ],
+        "total": "325.19",
+        "currency": "USD"
+      },
+      "products": [
+        {
+          "external_id": "24cea11b-406b-4845-9b23-7c51c140dd0d",
+          "name": "Meatballs in Marinara Sauce with Parmesan Cheese",
+          "url": "https://www.ubereats.com/product/24cea11b-406b-4845-9b23-7c51c140dd0d",
+          "quantity": 1,
+          "price": {
+            "sub_total": "11.25",
+            "total": "11.25",
+            "unit_price": "11.25"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189",
+          "name": "Toothache Relief Gel for Adults and Children",
+          "url": "https://www.ubereats.com/product/5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189",
+          "quantity": 1,
+          "price": {
+            "sub_total": "5.95",
+            "total": "5.95",
+            "unit_price": "5.95"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "eaaad2c1-e0da-40e7-8014-af9b0290b3b3",
+          "name": "Peanut Butter and Chocolate Chip Blondies",
+          "url": "https://www.ubereats.com/product/eaaad2c1-e0da-40e7-8014-af9b0290b3b3",
+          "quantity": 1,
+          "price": {
+            "sub_total": "3.75",
+            "total": "3.75",
+            "unit_price": "3.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "160d3e68-f969-4900-b147-33a0f4b16675",
+          "name": "Gourmet Butter Croissant with Almond Filling",
+          "url": "https://www.ubereats.com/product/160d3e68-f969-4900-b147-33a0f4b16675",
+          "quantity": 2,
+          "price": {
+            "sub_total": "9.70",
+            "total": "9.70",
+            "unit_price": "4.85"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "ab8c3a1d-4c38-45e1-af6a-7fae75eb3f54",
+          "name": "Fruit Infused Hydrating Face Mist Spray",
+          "url": "https://www.ubereats.com/product/ab8c3a1d-4c38-45e1-af6a-7fae75eb3f54",
+          "quantity": 1,
+          "price": {
+            "sub_total": "5.85",
+            "total": "5.85",
+            "unit_price": "5.85"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "e831f41c-b8f6-4d7a-900a-c7d437bdc08e",
+          "name": "Artisan Margherita Pizza with Fresh Basil and Buffalo Mozzarella",
+          "url": "https://www.ubereats.com/product/e831f41c-b8f6-4d7a-900a-c7d437bdc08e",
+          "quantity": 1,
+          "price": {
+            "sub_total": "16.50",
+            "total": "16.50",
+            "unit_price": "16.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f299f0de-ee23-4c4c-b155-29b48fbb594b",
+          "name": "Crispy Falafel Wrap with Hummus and Tzatziki",
+          "url": "https://www.ubereats.com/product/f299f0de-ee23-4c4c-b155-29b48fbb594b",
+          "quantity": 1,
+          "price": {
+            "sub_total": "8.95",
+            "total": "8.95",
+            "unit_price": "8.95"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f012e9bb-694f-4e3c-bb49-f74f126f8b87",
+          "name": "Sweet and Spicy Asian Shrimp Stir Fry",
+          "url": "https://www.ubereats.com/product/f012e9bb-694f-4e3c-bb49-f74f126f8b87",
+          "quantity": 1,
+          "price": {
+            "sub_total": "15.50",
+            "total": "15.50",
+            "unit_price": "15.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "3c051d3d-4887-426b-b8ad-c8236e512f8b",
+          "name": "Organic Green Tea with Lemon and Ginger",
+          "url": "https://www.ubereats.com/product/3c051d3d-4887-426b-b8ad-c8236e512f8b",
+          "quantity": 1,
+          "price": {
+            "sub_total": "3.25",
+            "total": "3.25",
+            "unit_price": "3.25"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "580f1deb-7050-493f-82a5-e9f75f2ad7c8",
+          "name": "Cheesesteak Sandwich with Saut\u00e9ed Onions and Peppers",
+          "url": "https://www.ubereats.com/product/580f1deb-7050-493f-82a5-e9f75f2ad7c8",
+          "quantity": 3,
+          "price": {
+            "sub_total": "32.97",
+            "total": "32.97",
+            "unit_price": "10.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "01ed6f86-53af-41c2-8d54-e1e2d8de96d4",
+          "name": "Balsamic Glazed Caprese Salad with Fresh Mozzarella",
+          "url": "https://www.ubereats.com/product/01ed6f86-53af-41c2-8d54-e1e2d8de96d4",
+          "quantity": 2,
+          "price": {
+            "sub_total": "21.00",
+            "total": "21.00",
+            "unit_price": "10.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f2125e4a-c902-42e7-b714-f73f93f8de07",
+          "name": "Bluetooth-Enabled Personal Scale with App Tracking",
+          "url": "https://www.ubereats.com/product/f2125e4a-c902-42e7-b714-f73f93f8de07",
+          "quantity": 3,
+          "price": {
+            "sub_total": "89.97",
+            "total": "89.97",
+            "unit_price": "29.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "2acd6adf-8d85-4918-bb86-29d1344914e7",
+          "name": "Herb Roasted Turkey Breast with Garlic Mashed Potatoes",
+          "url": "https://www.ubereats.com/product/2acd6adf-8d85-4918-bb86-29d1344914e7",
+          "quantity": 2,
+          "price": {
+            "sub_total": "39.50",
+            "total": "39.50",
+            "unit_price": "19.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "ad1a4db1-03e7-4952-af90-5970213339d7",
+          "name": "Homemade Banana Bread with Walnut Topping Slice",
+          "url": "https://www.ubereats.com/product/ad1a4db1-03e7-4952-af90-5970213339d7",
+          "quantity": 3,
+          "price": {
+            "sub_total": "14.85",
+            "total": "14.85",
+            "unit_price": "4.95"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "73f8b7cf-5c5e-47a1-b3ac-23cd6e61d9c7",
+          "name": "Dental Floss Picks with Fresh Mint Flavor 90 Count",
+          "url": "https://www.ubereats.com/product/73f8b7cf-5c5e-47a1-b3ac-23cd6e61d9c7",
+          "quantity": 1,
+          "price": {
+            "sub_total": "6.95",
+            "total": "6.95",
+            "unit_price": "6.95"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "db9291f8-594f-472a-a8d5-80de69212ce1",
+          "name": "Crispy Chicken Wings with Buffalo Sauce",
+          "url": "https://www.ubereats.com/product/db9291f8-594f-472a-a8d5-80de69212ce1",
+          "quantity": 1,
+          "price": {
+            "sub_total": "9.99",
+            "total": "9.99",
+            "unit_price": "9.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "7ac63b88-425e-4248-8191-b817c3c832a6",
+          "name": "Menstrual Pain Relief Heat Patch",
+          "url": "https://www.ubereats.com/product/7ac63b88-425e-4248-8191-b817c3c832a6",
+          "quantity": 1,
+          "price": {
+            "sub_total": "7.99",
+            "total": "7.99",
+            "unit_price": "7.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4d1b506f-6e98-4b15-a8c1-7c673be1b83a",
+      "external_id": "4d1b506f-6e98-4b15-a8c1-7c673be1b83a",
+      "datetime": "2024-01-30T09:20:40.592940",
+      "url": "www.ubereats.com/order/4d1b506f-6e98-4b15-a8c1-7c673be1b83a",
+      "order_status": "SHIPPED",
+      "payment_methods": [
+        {
+          "external_id": "226e16f1-077e-4487-a3b1-8e244b425f50",
+          "type": "CARD",
+          "brand": "MASTERCARD",
+          "last_four": "4297",
+          "transaction_amount": "316.27"
+        }
+      ],
+      "price": {
+        "sub_total": "295.58",
+        "adjustments": [
+          {
+            "type": "TAX",
+            "label": "Sales Tax",
+            "amount": "20.69"
+          }
+        ],
+        "total": "316.27",
+        "currency": "USD"
+      },
+      "products": [
+        {
+          "external_id": "5721ec3e-03c4-4d49-aa24-bab353783262",
+          "name": "Flu Relief Pack with Day and Night Capsules",
+          "url": "https://www.ubereats.com/product/5721ec3e-03c4-4d49-aa24-bab353783262",
+          "quantity": 2,
+          "price": {
+            "sub_total": "31.98",
+            "total": "31.98",
+            "unit_price": "15.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189-0207",
+          "name": "Toothache Relief Gel for Adults and Children",
+          "url": "https://www.ubereats.com/product/5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189-0207",
+          "quantity": 2,
+          "price": {
+            "sub_total": "11.90",
+            "total": "11.90",
+            "unit_price": "5.95"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "f8dbe14b-c73b-49b0-9c12-5c43088315e1",
+          "name": "Deli Style Reuben Sandwich with Sauerkraut on Rye",
+          "url": "https://www.ubereats.com/product/f8dbe14b-c73b-49b0-9c12-5c43088315e1",
+          "quantity": 1,
+          "price": {
+            "sub_total": "12.50",
+            "total": "12.50",
+            "unit_price": "12.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "db9291f8-594f-472a-a8d5-80de69212ce1-a265",
+          "name": "Crispy Chicken Wings with Buffalo Sauce",
+          "url": "https://www.ubereats.com/product/db9291f8-594f-472a-a8d5-80de69212ce1-a265",
+          "quantity": 1,
+          "price": {
+            "sub_total": "9.99",
+            "total": "9.99",
+            "unit_price": "9.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f012e9bb-694f-4e3c-bb49-f74f126f8b87-e35d",
+          "name": "Sweet and Spicy Asian Shrimp Stir Fry",
+          "url": "https://www.ubereats.com/product/f012e9bb-694f-4e3c-bb49-f74f126f8b87-e35d",
+          "quantity": 1,
+          "price": {
+            "sub_total": "15.50",
+            "total": "15.50",
+            "unit_price": "15.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "4d981b68-d1bb-4677-9352-a374f2ed79da",
+          "name": "Hearty Wheat Biscuits with Real Butter",
+          "url": "https://www.ubereats.com/product/4d981b68-d1bb-4677-9352-a374f2ed79da",
+          "quantity": 2,
+          "price": {
+            "sub_total": "8.50",
+            "total": "8.50",
+            "unit_price": "4.25"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "028d5b6d-9d69-4f8e-b5f1-8d7a5b1bde6c",
+          "name": "Classic BLT Sandwich with Applewood Smoked Bacon",
+          "url": "https://www.ubereats.com/product/028d5b6d-9d69-4f8e-b5f1-8d7a5b1bde6c",
+          "quantity": 1,
+          "price": {
+            "sub_total": "9.75",
+            "total": "9.75",
+            "unit_price": "9.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "821da414-6171-4cf1-a7ae-ef404d39fa14",
+          "name": "Sunscreen Lotion SPF 30 Water Resistant",
+          "url": "https://www.ubereats.com/product/821da414-6171-4cf1-a7ae-ef404d39fa14",
+          "quantity": 1,
+          "price": {
+            "sub_total": "10.75",
+            "total": "10.75",
+            "unit_price": "10.75"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "41f44178-a4df-4575-bc88-c1cb6b0a5dff",
+          "name": "Water-Resistant Athletic Sports Bandages",
+          "url": "https://www.ubereats.com/product/41f44178-a4df-4575-bc88-c1cb6b0a5dff",
+          "quantity": 1,
+          "price": {
+            "sub_total": "6.99",
+            "total": "6.99",
+            "unit_price": "6.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "478242a9-2c16-44bf-bca7-8268833417fb",
+          "name": "Feta and Spinach Stuffed Chicken Breast",
+          "url": "https://www.ubereats.com/product/478242a9-2c16-44bf-bca7-8268833417fb",
+          "quantity": 1,
+          "price": {
+            "sub_total": "14.25",
+            "total": "14.25",
+            "unit_price": "14.25"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "6bd0d973-136f-400d-b765-546217df395e",
+          "name": "Fresh California Sushi Roll with Crab and Avocado",
+          "url": "https://www.ubereats.com/product/6bd0d973-136f-400d-b765-546217df395e",
+          "quantity": 1,
+          "price": {
+            "sub_total": "9.99",
+            "total": "9.99",
+            "unit_price": "9.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f2125e4a-c902-42e7-b714-f73f93f8de07-9238",
+          "name": "Bluetooth-Enabled Personal Scale with App Tracking",
+          "url": "https://www.ubereats.com/product/f2125e4a-c902-42e7-b714-f73f93f8de07-9238",
+          "quantity": 2,
+          "price": {
+            "sub_total": "59.98",
+            "total": "59.98",
+            "unit_price": "29.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "e831f41c-b8f6-4d7a-900a-c7d437bdc08e-b4e9",
+          "name": "Artisan Margherita Pizza with Fresh Basil and Buffalo Mozzarella",
+          "url": "https://www.ubereats.com/product/e831f41c-b8f6-4d7a-900a-c7d437bdc08e-b4e9",
+          "quantity": 1,
+          "price": {
+            "sub_total": "16.50",
+            "total": "16.50",
+            "unit_price": "16.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "907024cd-ee9f-48b4-bc20-a813fb1b1cf0",
+          "name": "Wireless Ear Thermometer with LCD Display",
+          "url": "https://www.ubereats.com/product/907024cd-ee9f-48b4-bc20-a813fb1b1cf0",
+          "quantity": 2,
+          "price": {
+            "sub_total": "77.00",
+            "total": "77.00",
+            "unit_price": "38.50"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "030bfb5a-2e83-4ecc-a123-c141c0e660f6",
+      "external_id": "030bfb5a-2e83-4ecc-a123-c141c0e660f6",
+      "datetime": "2024-02-01T03:26:06.592940",
+      "url": "www.ubereats.com/order/030bfb5a-2e83-4ecc-a123-c141c0e660f6",
+      "order_status": "ORDERED",
+      "payment_methods": [
+        {
+          "external_id": "5e72b06b-447c-45b6-8c5d-4936a51e9361",
+          "type": "CARD",
+          "brand": "AMEX",
+          "last_four": "7752",
+          "transaction_amount": "93.56"
+        }
+      ],
+      "price": {
+        "sub_total": "87.44",
+        "adjustments": [
+          {
+            "type": "TAX",
+            "label": "Sales Tax",
+            "amount": "6.12"
+          }
+        ],
+        "total": "93.56",
+        "currency": "USD"
+      },
+      "products": [
+        {
+          "external_id": "eaaad2c1-e0da-40e7-8014-af9b0290b3b3-37f8",
+          "name": "Peanut Butter and Chocolate Chip Blondies",
+          "url": "https://www.ubereats.com/product/eaaad2c1-e0da-40e7-8014-af9b0290b3b3-37f8",
+          "quantity": 1,
+          "price": {
+            "sub_total": "3.75",
+            "total": "3.75",
+            "unit_price": "3.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "24cea11b-406b-4845-9b23-7c51c140dd0d-9557",
+          "name": "Meatballs in Marinara Sauce with Parmesan Cheese",
+          "url": "https://www.ubereats.com/product/24cea11b-406b-4845-9b23-7c51c140dd0d-9557",
+          "quantity": 2,
+          "price": {
+            "sub_total": "22.50",
+            "total": "22.50",
+            "unit_price": "11.25"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "9adde1c3-c989-4f7f-bf21-461add7c58eb",
+          "name": "Caesar Salad with Grilled Chicken and Parmesan Crisps",
+          "url": "https://www.ubereats.com/product/9adde1c3-c989-4f7f-bf21-461add7c58eb",
+          "quantity": 1,
+          "price": {
+            "sub_total": "11.50",
+            "total": "11.50",
+            "unit_price": "11.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f4dc78b7-3658-454c-a94f-607f93ec266c",
+          "name": "Traditional Italian Lasagna with Beef Ragu",
+          "url": "https://www.ubereats.com/product/f4dc78b7-3658-454c-a94f-607f93ec266c",
+          "quantity": 1,
+          "price": {
+            "sub_total": "14.99",
+            "total": "14.99",
+            "unit_price": "14.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "3cc3f052-84a9-4a8c-af5f-6a0eb1b15da6",
+          "name": "All-Natural Greek Yogurt with Honey and Granola",
+          "url": "https://www.ubereats.com/product/3cc3f052-84a9-4a8c-af5f-6a0eb1b15da6",
+          "quantity": 1,
+          "price": {
+            "sub_total": "5.75",
+            "total": "5.75",
+            "unit_price": "5.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "2acd6adf-8d85-4918-bb86-29d1344914e7-70fc",
+          "name": "Herb Roasted Turkey Breast with Garlic Mashed Potatoes",
+          "url": "https://www.ubereats.com/product/2acd6adf-8d85-4918-bb86-29d1344914e7-70fc",
+          "quantity": 1,
+          "price": {
+            "sub_total": "19.75",
+            "total": "19.75",
+            "unit_price": "19.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189-bace",
+          "name": "Toothache Relief Gel for Adults and Children",
+          "url": "https://www.ubereats.com/product/5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189-bace",
+          "quantity": 1,
+          "price": {
+            "sub_total": "5.95",
+            "total": "5.95",
+            "unit_price": "5.95"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "3c051d3d-4887-426b-b8ad-c8236e512f8b-6269",
+          "name": "Organic Green Tea with Lemon and Ginger",
+          "url": "https://www.ubereats.com/product/3c051d3d-4887-426b-b8ad-c8236e512f8b-6269",
+          "quantity": 1,
+          "price": {
+            "sub_total": "3.25",
+            "total": "3.25",
+            "unit_price": "3.25"
+          },
+          "eligibility": []
+        }
+      ]
+    },
+    {
+      "id": "f9cda1e3-7fb4-4714-b9b8-4945d55bd3f8",
+      "external_id": "f9cda1e3-7fb4-4714-b9b8-4945d55bd3f8",
+      "datetime": "2024-02-02T02:01:02.592940",
+      "url": "www.ubereats.com/order/f9cda1e3-7fb4-4714-b9b8-4945d55bd3f8",
+      "order_status": "FAILED",
+      "payment_methods": [
+        {
+          "external_id": "26279e2d-d5e2-4f0d-8c3c-4813256628af",
+          "type": "CARD",
+          "brand": "DISCOVER",
+          "last_four": "3050",
+          "transaction_amount": "119.63"
+        },
+        {
+          "external_id": "0b649106-6c7d-428e-b196-89638019264d",
+          "type": "CARD",
+          "brand": "EBTSNAP",
+          "last_four": "7893",
+          "transaction_amount": "119.63"
+        }
+      ],
+      "price": {
+        "sub_total": "223.61",
+        "adjustments": [
+          {
+            "type": "TAX",
+            "label": "Sales Tax",
+            "amount": "15.65"
+          }
+        ],
+        "total": "239.26",
+        "currency": "USD"
+      },
+      "products": [
+        {
+          "external_id": "2acd6adf-8d85-4918-bb86-29d1344914e7-aa4a",
+          "name": "Herb Roasted Turkey Breast with Garlic Mashed Potatoes",
+          "url": "https://www.ubereats.com/product/2acd6adf-8d85-4918-bb86-29d1344914e7-aa4a",
+          "quantity": 1,
+          "price": {
+            "sub_total": "19.75",
+            "total": "19.75",
+            "unit_price": "19.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "9adde1c3-c989-4f7f-bf21-461add7c58eb-25fc",
+          "name": "Caesar Salad with Grilled Chicken and Parmesan Crisps",
+          "url": "https://www.ubereats.com/product/9adde1c3-c989-4f7f-bf21-461add7c58eb-25fc",
+          "quantity": 2,
+          "price": {
+            "sub_total": "23.00",
+            "total": "23.00",
+            "unit_price": "11.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "5a07e7fd-475d-42f7-b636-4908b299a943",
+          "name": "Vanilla Bean Ice Cream Sundae with Salted Caramel Sauce",
+          "url": "https://www.ubereats.com/product/5a07e7fd-475d-42f7-b636-4908b299a943",
+          "quantity": 1,
+          "price": {
+            "sub_total": "8.99",
+            "total": "8.99",
+            "unit_price": "8.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "479ff8cf-abd0-42bd-839d-61f6c469aa23",
+          "name": "Honey Glazed BBQ Ribs with Coleslaw and Cornbread",
+          "url": "https://www.ubereats.com/product/479ff8cf-abd0-42bd-839d-61f6c469aa23",
+          "quantity": 1,
+          "price": {
+            "sub_total": "18.99",
+            "total": "18.99",
+            "unit_price": "18.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "dfbafd30-20cd-4645-b99f-8c367e1b91cb",
+          "name": "Artisan Sourdough Bread Loaf Baked Fresh Daily",
+          "url": "https://www.ubereats.com/product/dfbafd30-20cd-4645-b99f-8c367e1b91cb",
+          "quantity": 3,
+          "price": {
+            "sub_total": "14.97",
+            "total": "14.97",
+            "unit_price": "4.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "c08e1cfc-df9b-46db-8f1a-4a667c3a9e17",
+          "name": "Breathable Fabric Elastic Sports Tape",
+          "url": "https://www.ubereats.com/product/c08e1cfc-df9b-46db-8f1a-4a667c3a9e17",
+          "quantity": 1,
+          "price": {
+            "sub_total": "7.50",
+            "total": "7.50",
+            "unit_price": "7.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "028d5b6d-9d69-4f8e-b5f1-8d7a5b1bde6c-6b22",
+          "name": "Classic BLT Sandwich with Applewood Smoked Bacon",
+          "url": "https://www.ubereats.com/product/028d5b6d-9d69-4f8e-b5f1-8d7a5b1bde6c-6b22",
+          "quantity": 1,
+          "price": {
+            "sub_total": "9.75",
+            "total": "9.75",
+            "unit_price": "9.75"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "41f44178-a4df-4575-bc88-c1cb6b0a5dff-1d32",
+          "name": "Water-Resistant Athletic Sports Bandages",
+          "url": "https://www.ubereats.com/product/41f44178-a4df-4575-bc88-c1cb6b0a5dff-1d32",
+          "quantity": 1,
+          "price": {
+            "sub_total": "6.99",
+            "total": "6.99",
+            "unit_price": "6.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "86a739fd-c43c-45d8-9573-b8d9460e72b3",
+          "name": "Gourmet Cheese Board with Grapes and Crackers",
+          "url": "https://www.ubereats.com/product/86a739fd-c43c-45d8-9573-b8d9460e72b3",
+          "quantity": 1,
+          "price": {
+            "sub_total": "22.25",
+            "total": "22.25",
+            "unit_price": "22.25"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "e23cedff-fd33-4204-9907-e43c79344139",
+          "name": "Gingerbread Latte with Nutmeg and Cinnamon",
+          "url": "https://www.ubereats.com/product/e23cedff-fd33-4204-9907-e43c79344139",
+          "quantity": 1,
+          "price": {
+            "sub_total": "5.99",
+            "total": "5.99",
+            "unit_price": "5.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f2125e4a-c902-42e7-b714-f73f93f8de07-3031",
+          "name": "Bluetooth-Enabled Personal Scale with App Tracking",
+          "url": "https://www.ubereats.com/product/f2125e4a-c902-42e7-b714-f73f93f8de07-3031",
+          "quantity": 2,
+          "price": {
+            "sub_total": "59.98",
+            "total": "59.98",
+            "unit_price": "29.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "ec88180e-3bb1-4fa6-aaab-fd60d3e96c9b",
+          "name": "Double Layer Chocolate Fudge Cake Slice",
+          "url": "https://www.ubereats.com/product/ec88180e-3bb1-4fa6-aaab-fd60d3e96c9b",
+          "quantity": 3,
+          "price": {
+            "sub_total": "19.50",
+            "total": "19.50",
+            "unit_price": "6.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189-974b",
+          "name": "Toothache Relief Gel for Adults and Children",
+          "url": "https://www.ubereats.com/product/5e9ef1d3-888a-4d60-a0a2-b8ad2ad95189-974b",
+          "quantity": 1,
+          "price": {
+            "sub_total": "5.95",
+            "total": "5.95",
+            "unit_price": "5.95"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "e5785b53-2a4f-4964-a222-e3c352eba77b",
+      "external_id": "e5785b53-2a4f-4964-a222-e3c352eba77b",
+      "datetime": "2024-02-03T05:29:24.592940",
+      "url": "www.ubereats.com/order/e5785b53-2a4f-4964-a222-e3c352eba77b",
+      "order_status": "CANCELLED",
+      "payment_methods": [
+        {
+          "external_id": "bb5793d3-afdd-4379-ae59-f8ca3d40ef41",
+          "type": "PAYPAL",
+          "transaction_amount": "92.72"
+        }
+      ],
+      "price": {
+        "sub_total": "89.20",
+        "adjustments": [
+          {
+            "type": "DISCOUNT",
+            "label": "Promo Code",
+            "amount": "-2.72"
+          },
+          {
+            "type": "TAX",
+            "label": "Sales Tax",
+            "amount": "6.24"
+          }
+        ],
+        "total": "92.72",
+        "currency": "USD"
+      },
+      "products": [
+        {
+          "external_id": "c08e1cfc-df9b-46db-8f1a-4a667c3a9e17-4119",
+          "name": "Breathable Fabric Elastic Sports Tape",
+          "url": "https://www.ubereats.com/product/c08e1cfc-df9b-46db-8f1a-4a667c3a9e17-4119",
+          "quantity": 2,
+          "price": {
+            "sub_total": "15.00",
+            "total": "15.00",
+            "unit_price": "7.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "5fd458e1-3cd2-4d83-a7f1-df0f1c5cb669",
+          "name": "Caramel Frappuccino with Whipped Cream and Chocolate Drizzle",
+          "url": "https://www.ubereats.com/product/5fd458e1-3cd2-4d83-a7f1-df0f1c5cb669",
+          "quantity": 2,
+          "price": {
+            "sub_total": "11.98",
+            "total": "11.98",
+            "unit_price": "5.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "6bd0d973-136f-400d-b765-546217df395e-5db7",
+          "name": "Fresh California Sushi Roll with Crab and Avocado",
+          "url": "https://www.ubereats.com/product/6bd0d973-136f-400d-b765-546217df395e-5db7",
+          "quantity": 1,
+          "price": {
+            "sub_total": "9.99",
+            "total": "9.99",
+            "unit_price": "9.99"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "f8dbe14b-c73b-49b0-9c12-5c43088315e1-7961",
+          "name": "Deli Style Reuben Sandwich with Sauerkraut on Rye",
+          "url": "https://www.ubereats.com/product/f8dbe14b-c73b-49b0-9c12-5c43088315e1-7961",
+          "quantity": 1,
+          "price": {
+            "sub_total": "12.50",
+            "total": "12.50",
+            "unit_price": "12.50"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "3c051d3d-4887-426b-b8ad-c8236e512f8b-70da",
+          "name": "Organic Green Tea with Lemon and Ginger",
+          "url": "https://www.ubereats.com/product/3c051d3d-4887-426b-b8ad-c8236e512f8b-70da",
+          "quantity": 1,
+          "price": {
+            "sub_total": "3.25",
+            "total": "3.25",
+            "unit_price": "3.25"
+          },
+          "eligibility": []
+        },
+        {
+          "external_id": "5721ec3e-03c4-4d49-aa24-bab353783262-69cb",
+          "name": "Flu Relief Pack with Day and Night Capsules",
+          "url": "https://www.ubereats.com/product/5721ec3e-03c4-4d49-aa24-bab353783262-69cb",
+          "quantity": 2,
+          "price": {
+            "sub_total": "31.98",
+            "total": "31.98",
+            "unit_price": "15.99"
+          },
+          "eligibility": [
+            "FSA_HSA"
+          ]
+        },
+        {
+          "external_id": "b093ae2e-1eac-4a88-a1b5-b1e6386eebd6",
+          "name": "Warm Apple Cinnamon Oatmeal with Brown Sugar",
+          "url": "https://www.ubereats.com/product/b093ae2e-1eac-4a88-a1b5-b1e6386eebd6",
+          "quantity": 1,
+          "price": {
+            "sub_total": "4.50",
+            "total": "4.50",
+            "unit_price": "4.50"
+          },
+          "eligibility": []
+        }
+      ]
+    }
+  ],
+  "next_cursor": "eyJtIjozNiwicG9zIjo1fQ",
+  "limit": 5
+}

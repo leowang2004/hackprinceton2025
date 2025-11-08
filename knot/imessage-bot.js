@@ -17,22 +17,29 @@ const sdk = new IMessageSDK({
 })
 
 async function callChatBackend(from, text) {
-  const res = await fetch(CHAT_BACKEND_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message: text,
-      userId: from, // later: map this -> external_user_id
-    }),
-  })
+  try {
+    const res = await fetch(CHAT_BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        userId: from, // later: map this -> external_user_id
+        useCortex: true, // Enable Cortex for all queries
+      }),
+    })
 
-  if (!res.ok) {
-    console.error('Backend error status:', res.status)
-    return "Sorry, I'm having trouble reaching your data right now."
+    if (!res.ok) {
+      console.error('Backend error status:', res.status)
+      const errorData = await res.json().catch(() => ({}))
+      return errorData.answer || errorData.error || "Sorry, I'm having trouble reaching your data right now."
+    }
+
+    const data = await res.json()
+    return data.answer || data.error || "Sorry, I couldn't understand that."
+  } catch (err) {
+    console.error('Error calling chat backend:', err)
+    return "Sorry, I'm having trouble connecting to the server right now."
   }
-
-  const data = await res.json()
-  return data.answer || "Sorry, I couldn't understand that."
 }
 
 async function handleIncoming(message) {

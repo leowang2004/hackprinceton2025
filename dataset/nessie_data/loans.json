@@ -1,0 +1,46 @@
+[
+  {
+    "_id": "690f92c008f7513c4ad89fe2",
+    "type": "home",
+    "status": "pending",
+    "credit_score": 687,
+    "monthly_payment": 25,
+    "amount": 100,
+    "description": "string",
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f92d508f7513c4ad89fe3",
+    "type": "home",
+    "status": "pending",
+    "credit_score": 687,
+    "monthly_payment": 24.875,
+    "amount": 199,
+    "description": "string",
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f92e408f7513c4ad89fe4",
+    "type": "home",
+    "status": "pending",
+    "credit_score": 685,
+    "monthly_payment": 10,
+    "amount": 1000,
+    "description": "string",
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f92f308f7513c4ad89fe5",
+    "type": "home",
+    "status": "pending",
+    "credit_score": 685,
+    "monthly_payment": 25,
+    "amount": 500,
+    "description": "string",
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  }
+]
