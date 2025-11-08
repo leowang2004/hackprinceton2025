@@ -103,7 +103,7 @@ async def login(request: LoginRequest):
         print(f"Login error: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=f"An error occurred during login: {str(e)}"
+            detail="An error occurred during login"
         )
 
 
@@ -112,14 +112,21 @@ async def knot_status():
     """Check Knot API connection status"""
     try:
         status = await knot_service.check_status()
+        # Remove sensitive error details before returning
+        if 'error' in status:
+            # Log the full error but don't expose it
+            print(f"Knot API status error: {status['error']}")
+            status = {k: v for k, v in status.items() if k != 'error'}
         return {
             "success": True,
             "status": status
         }
     except Exception as e:
+        # Log the error but don't expose stack trace to user
+        print(f"Error checking Knot API status: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to check Knot API status: {str(e)}"
+            detail="Failed to check Knot API status"
         )
 
 
@@ -135,9 +142,11 @@ async def get_transactions(email: str):
             "transactions": transactions
         }
     except Exception as e:
+        # Log the error but don't expose stack trace to user
+        print(f"Error fetching transactions: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to fetch transactions: {str(e)}"
+            detail="Failed to fetch transactions"
         )
 
 
