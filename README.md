@@ -6,8 +6,8 @@ A mobile application that calculates alternative credit scores based on Amazon t
 
 This project consists of two main components:
 
-1. **iOS Mobile App** - SwiftUI-based app with fake Amazon login
-2. **Node.js Backend** - Server with Knot API integration and credit score calculation
+1. **React Native Mobile App** - Cross-platform app (iOS & Android) with fake Amazon login
+2. **Python Backend** - FastAPI server with Knot API integration and credit score calculation
 
 ## Features
 
@@ -21,50 +21,60 @@ This project consists of two main components:
 ## Architecture
 
 ```
-┌─────────────────┐
-│   iOS App       │
-│  (SwiftUI)      │
-└────────┬────────┘
-         │ HTTP/JSON
-         ▼
-┌─────────────────┐
-│  Node.js        │
-│  Backend        │
-└────────┬────────┘
-         │ REST API
-         ▼
-┌─────────────────┐
-│   Knot API      │
-│  (Transaction   │
-│      Data)      │
-└─────────────────┘
+┌─────────────────────┐
+│  React Native App   │
+│  (iOS & Android)    │
+└──────────┬──────────┘
+           │ HTTP/JSON
+           ▼
+┌─────────────────────┐
+│  Python Backend     │
+│  (FastAPI)          │
+└──────────┬──────────┘
+           │ REST API
+           ▼
+┌─────────────────────┐
+│   Knot API          │
+│  (Transaction Data) │
+└─────────────────────┘
 ```
 
 ## Quick Start
 
-### Backend Setup
+### Backend Setup (Python/FastAPI)
 
 ```bash
 cd backend
-npm install
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your Knot API credentials (optional)
-npm start
+python main.py
 ```
 
 The backend will run on `http://localhost:3000`
 
-### iOS App Setup
+### Mobile App Setup (React Native)
 
-1. Open the Xcode project:
+1. Navigate to mobile app directory:
 ```bash
-cd ios-app
-open AmazonCreditScore.xcodeproj
+cd mobile-app
+npm install
 ```
 
-2. Update the backend URL in `NetworkService.swift` if needed
+2. For iOS (macOS only):
+```bash
+cd ios && pod install && cd ..
+npm run ios
+```
 
-3. Build and run in Xcode (Cmd+R)
+3. For Android:
+```bash
+npm run android
+```
+
+4. Update backend URL in `src/services/NetworkService.js` if needed
 
 ## Documentation
 
@@ -100,7 +110,7 @@ To use with real Knot API:
 1. Sign up at https://knotapi.com
 2. Get API credentials
 3. Add to backend `.env` file
-4. Integrate Knot iOS SDK in mobile app
+4. Integrate Knot SDK in mobile app (React Native compatible)
 
 **Note:** Mock data is used if Knot API credentials are not configured.
 
@@ -108,23 +118,26 @@ To use with real Knot API:
 
 ```
 hackprinceton2025/
-├── ios-app/                    # iOS mobile application
-│   ├── AmazonCreditScore.xcodeproj/
-│   ├── AmazonCreditScore/
-│   │   ├── AmazonCreditScoreApp.swift
-│   │   ├── ContentView.swift
-│   │   ├── LoginView.swift
-│   │   └── NetworkService.swift
-│   └── README.md
-├── backend/                    # Node.js backend server
-│   ├── routes/
-│   │   ├── auth.js
-│   │   └── knot.js
-│   ├── services/
-│   │   ├── knotService.js
-│   │   └── creditScoreService.js
-│   ├── server.js
+├── mobile-app/                  # React Native mobile application
+│   ├── src/
+│   │   ├── App.js               # Main app with navigation
+│   │   ├── screens/
+│   │   │   ├── LoginScreen.js   # Amazon login screen
+│   │   │   └── CreditScoreScreen.js
+│   │   ├── components/
+│   │   │   └── CircularProgress.js
+│   │   └── services/
+│   │       └── NetworkService.js
+│   ├── android/                 # Android native code
+│   ├── ios/                     # iOS native code
 │   ├── package.json
+│   └── README.md
+├── backend/                     # Python backend server
+│   ├── services/
+│   │   ├── knot_service.py
+│   │   └── credit_score_service.py
+│   ├── main.py
+│   ├── requirements.txt
 │   └── README.md
 └── README.md
 ```
@@ -160,14 +173,16 @@ Retrieve transaction data for user
 ## Technologies Used
 
 ### Mobile App
-- Swift 5.0
-- SwiftUI
-- iOS 16.0+
+- React Native 0.72+
+- React Navigation
+- Axios (HTTP client)
+- React Native SVG
 
 ### Backend
-- Node.js
-- Express.js
-- Axios (HTTP client)
+- Python 3.8+
+- FastAPI
+- Pydantic (data validation)
+- Uvicorn (ASGI server)
 - Knot API SDK
 
 ## Development Notes

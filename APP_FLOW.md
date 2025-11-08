@@ -45,6 +45,7 @@
 
 ```
 Mobile App                Backend                 Knot API
+(React Native)           (Python/FastAPI)
     │                        │                        │
     │ POST /api/login        │                        │
     ├───────────────────────>│                        │
@@ -183,26 +184,27 @@ For 20 mock transactions:
 ```
 hackprinceton2025/
 │
-├── 📱 ios-app/
-│   ├── AmazonCreditScore.xcodeproj/
-│   │   └── project.pbxproj (Xcode project configuration)
-│   ├── AmazonCreditScore/
-│   │   ├── AmazonCreditScoreApp.swift  (App entry point)
-│   │   ├── ContentView.swift            (Score display)
-│   │   ├── LoginView.swift              (Amazon login UI)
-│   │   ├── NetworkService.swift         (API client)
-│   │   └── Info.plist                   (App config)
+├── 📱 mobile-app/
+│   ├── src/
+│   │   ├── App.js                       (Main app with navigation)
+│   │   ├── screens/
+│   │   │   ├── LoginScreen.js           (Amazon login UI)
+│   │   │   └── CreditScoreScreen.js     (Score display)
+│   │   ├── components/
+│   │   │   └── CircularProgress.js      (SVG progress indicator)
+│   │   └── services/
+│   │       └── NetworkService.js        (API client)
+│   ├── android/                         (Android native code)
+│   ├── ios/                             (iOS native code)
+│   ├── package.json                     (Dependencies)
 │   └── README.md
 │
 ├── 🖥️  backend/
-│   ├── routes/
-│   │   ├── auth.js                      (Login endpoints)
-│   │   └── knot.js                      (Knot API routes)
 │   ├── services/
-│   │   ├── knotService.js               (Knot integration)
-│   │   └── creditScoreService.js        (Score algorithm)
-│   ├── server.js                        (Express server)
-│   ├── package.json                     (Dependencies)
+│   │   ├── knot_service.py              (Knot integration)
+│   │   └── credit_score_service.py      (Score algorithm)
+│   ├── main.py                          (FastAPI app)
+│   ├── requirements.txt                 (Dependencies)
 │   └── README.md
 │
 ├── 📚 KNOT_INTEGRATION.md               (Integration guide)
@@ -215,9 +217,9 @@ hackprinceton2025/
 ┌─────────────────────────────────────────────┐
 │              Mobile Layer                   │
 │  ┌─────────────────────────────────────┐   │
-│  │  SwiftUI (iOS 16+)                  │   │
-│  │  - LoginView                        │   │
-│  │  - ContentView                      │   │
+│  │  React Native (iOS & Android)       │   │
+│  │  - LoginScreen                      │   │
+│  │  - CreditScoreScreen                │   │
 │  │  - NetworkService                   │   │
 │  └─────────────────────────────────────┘   │
 └─────────────────────────────────────────────┘
@@ -225,9 +227,9 @@ hackprinceton2025/
 ┌─────────────────────────────────────────────┐
 │            Backend Layer                    │
 │  ┌─────────────────────────────────────┐   │
-│  │  Node.js + Express                  │   │
-│  │  - Authentication Routes            │   │
-│  │  - Knot API Routes                  │   │
+│  │  Python + FastAPI                   │   │
+│  │  - Authentication Endpoints         │   │
+│  │  - Knot API Integration             │   │
 │  │  - Credit Score Service             │   │
 │  └─────────────────────────────────────┘   │
 └─────────────────────────────────────────────┘
