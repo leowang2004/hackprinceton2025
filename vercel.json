@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/get-credit-score",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/api/get-merchants",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/newfrontend/dist/assets/$1"
+    },
+    {
+      "src": "/(.*\\..+)",
+      "dest": "/newfrontend/dist/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/newfrontend/dist/index.html"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
