@@ -8,11 +8,11 @@ interface WelcomePageProps {
 
 export function WelcomePage({ onGetStarted }: WelcomePageProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-sky-950 to-blue-950 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -26,7 +26,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           }}
         />
         <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.3, 0.6, 0.3],
@@ -41,7 +41,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           }}
         />
         <motion.div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-3xl"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-600/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.1, 1],
             rotate: [0, 180, 360],
@@ -108,7 +108,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           }}
         >
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 blur-2xl opacity-50 rounded-full"
+            className="absolute inset-0 bg-gradient-to-br from-sky-500 to-blue-500 blur-2xl opacity-50 rounded-full"
             animate={{
               scale: [1, 1.2, 1],
               opacity: [0.5, 0.8, 0.5],
@@ -120,7 +120,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
             }}
           />
           <motion.div 
-            className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-2xl"
+            className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center shadow-2xl"
             animate={{
               y: [0, -10, 0],
             }}
@@ -144,6 +144,51 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
               ✦
             </motion.span>
           </motion.div>
+          {/* Wings - left and right small swings */}
+          <div className="pointer-events-none">
+            {/* Left wings group */}
+            <div className="absolute left-[-70px] top-1/2 -translate-y-1/2">
+              {/* 左翅膀 1 - 最小 (40px) - 尾部向上 */}
+              <motion.svg width="50" height="40" viewBox="0 0 50 50"
+                animate={{ opacity: 0.5, x: -2, rotate: -15, y: [0, -8, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}>
+                <path d="M5 25 C15 5, 35 5, 45 25 C35 28, 15 28, 5 25 Z" fill="white" fillOpacity="0.35"/>
+              </motion.svg>
+              {/* 左翅膀 2 - 中等 (50px) - 水平 */}
+              <motion.svg width="50" height="50" viewBox="0 0 50 50"
+                animate={{ opacity: 0.7, x: 0, rotate: 0, y: [0, -8, 0] }}
+                transition={{ duration: 2.1, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}>
+                <path d="M5 25 C15 8, 35 8, 45 25 C35 30, 15 30, 5 25 Z" fill="white" fillOpacity="0.45"/>
+              </motion.svg>
+              {/* 左翅膀 3 - 最大 (60px) - 尾部向下 */}
+              <motion.svg width="50" height="60" viewBox="0 0 50 60"
+                animate={{ opacity: 1, x: 2, rotate: 15, y: [0, -8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}>
+                <path d="M5 30 C15 12, 35 12, 45 30 C35 34, 15 34, 5 30 Z" fill="white" fillOpacity="0.6"/>
+              </motion.svg>
+            </div>
+            {/* Right wings group (mirror) */}
+            <div className="absolute right-[-70px] top-1/2 -translate-y-1/2">
+              {/* 右翅膀 1 - 最小 (40px) - 尾部向上 */}
+              <motion.svg width="50" height="40" viewBox="0 0 50 50"
+                animate={{ opacity: 0.5, x: 2, rotate: 15, y: [0, -8, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}>
+                <path d="M45 25 C35 5, 15 5, 5 25 C15 28, 35 28, 45 25 Z" fill="white" fillOpacity="0.35"/>
+              </motion.svg>
+              {/* 右翅膀 2 - 中等 (50px) - 水平 */}
+              <motion.svg width="50" height="50" viewBox="0 0 50 50"
+                animate={{ opacity: 0.7, x: 0, rotate: 0, y: [0, -8, 0] }}
+                transition={{ duration: 2.1, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}>
+                <path d="M45 25 C35 8, 15 8, 5 25 C15 30, 35 30, 45 25 Z" fill="white" fillOpacity="0.45"/>
+              </motion.svg>
+              {/* 右翅膀 3 - 最大 (60px) - 尾部向下 */}
+              <motion.svg width="50" height="60" viewBox="0 0 50 60"
+                animate={{ opacity: 1, x: -2, rotate: -15, y: [0, -8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}>
+                <path d="M45 30 C35 12, 15 12, 5 30 C15 34, 35 34, 45 30 Z" fill="white" fillOpacity="0.6"/>
+              </motion.svg>
+            </div>
+          </div>
         </motion.div>
 
         {/* Main Heading */}
@@ -170,12 +215,12 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           </motion.div>
           
           <motion.h1 
-            className="text-7xl mb-6 bg-gradient-to-r from-white via-indigo-100 to-purple-100 bg-clip-text text-transparent leading-tight"
+            className="text-7xl mb-6 text-white leading-tight"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Unlock More with Wings
+            Unlock with <span className="text-sky-300">Wings</span>
           </motion.h1>
           
           <motion.p 
@@ -199,7 +244,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
         >
           <Button
             onClick={onGetStarted}
-            className="group h-16 px-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-lg rounded-2xl shadow-2xl shadow-indigo-500/50 transition-all duration-300 border border-white/20 relative overflow-hidden"
+            className="group h-16 px-12 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white text-lg rounded-2xl shadow-2xl shadow-sky-500/40 transition-all duration-300 border border-white/20 relative overflow-hidden"
           >
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
@@ -238,9 +283,9 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           transition={{ delay: 1.1, duration: 0.6 }}
         >
           {[
-            { icon: TrendingUp, text: 'Build Credit Smarter', color: 'text-indigo-400', delay: 0 },
-            { icon: Shield, text: 'Bank-Level Security', color: 'text-purple-400', delay: 0.1 },
-            { icon: Zap, text: 'Instant Approvals', color: 'text-indigo-400', delay: 0.2 },
+            { icon: TrendingUp, text: 'Build Credit Smarter', color: 'text-sky-400', delay: 0 },
+            { icon: Shield, text: 'Bank-Level Security', color: 'text-blue-400', delay: 0.1 },
+            { icon: Zap, text: 'Instant Approvals', color: 'text-sky-400', delay: 0.2 },
           ].map((feature, index) => (
             <motion.div
               key={index}
@@ -281,7 +326,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <motion.div 
-                className="text-4xl mb-2 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"
+                className="text-4xl mb-2 bg-gradient-to-r from-sky-400 to-blue-400 bg-clip-text text-transparent"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ 

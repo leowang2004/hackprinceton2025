@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, CheckCircle2, User, ShoppingBag, Building2, Lock, ExternalLink } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ArrowLeft, ArrowRight, CheckCircle2, User, ShoppingBag, Building2, Lock, ExternalLink, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -35,6 +36,35 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     { id: 'doordash', name: 'DoorDash', icon: '🍔', color: 'from-red-600 to-pink-600' },
     { id: 'uber', name: 'Uber', icon: '🚗', color: 'from-slate-900 to-slate-700' },
   ];
+
+  // ⚡ Skip for Demo Efficiency
+  const handleSkipStep = () => {
+    if (currentStep === 'profile') {
+      setProfileData({
+        firstName: 'Sarah',
+        lastName: 'Johnson',
+        email: 'sarah.johnson@email.com',
+        phone: '(555) 234-5678',
+      });
+      setTimeout(() => setCurrentStep('merchants'), 500);
+    } else if (currentStep === 'merchants') {
+      const demoMerchants = ['amazon', 'doordash', 'bestbuy'];
+      setSelectedMerchants(demoMerchants);
+      const tokens: Record<string, string> = {};
+      demoMerchants.forEach(id => {
+        tokens[id] = `${id}_demo_token_verified`;
+      });
+      setMerchantTokens(tokens);
+      setTimeout(() => setCurrentStep('bank'), 500);
+    } else if (currentStep === 'bank') {
+      setBankData({
+        accountName: 'Sarah Johnson',
+        routingNumber: '021000021',
+        accountNumber: '1234567890',
+      });
+      setTimeout(() => onComplete(), 500);
+    }
+  };
 
   const handleMerchantToggle = (merchantId: string) => {
     if (selectedMerchants.includes(merchantId)) {
@@ -147,12 +177,53 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
               <span className="text-xl">✦</span>
             </div>
-            <span className="text-xl tracking-tight">WingsPay</span>
+            <span className="text-xl tracking-tight">Wings</span>
+          </div>
+          {/* ⚡ Skip Button with effects */}
+          <div className="ml-auto relative">
+            <motion.div
+              className="absolute inset-0 rounded-xl"
+              animate={{ boxShadow: ['0 0 0 0 rgba(2,132,199,0.35)','0 0 0 8px rgba(2,132,199,0)','0 0 0 0 rgba(2,132,199,0)'] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            />
+            <motion.div
+              className="absolute inset-0 rounded-xl"
+              animate={{ boxShadow: ['0 0 0 0 rgba(37,99,235,0.35)','0 0 0 8px rgba(37,99,235,0)','0 0 0 0 rgba(37,99,235,0)'] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 1 }}
+            />
+            <motion.div
+              className="absolute -top-2 -right-2 text-yellow-400"
+              animate={{ y: [-2,-8,-2], rotate: [0,180,360], scale: [1,1.2,1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <Sparkles className="h-4 w-4" />
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                onClick={handleSkipStep}
+                className="relative overflow-hidden h-11 px-6 bg-gradient-to-r from-sky-600 to-blue-600 text-white rounded-xl"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  animate={{ x: ['-200%','200%'] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 0.5, ease: 'easeInOut' }}
+                />
+                <span className="relative z-10 flex items-center gap-2">
+                  <motion.span
+                    animate={{ rotate: [0, 20, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 1 }}
+                  >
+                    ⚡
+                  </motion.span>
+                  <span>Skip for Demo Efficiency</span>
+                </span>
+              </Button>
+            </motion.div>
           </div>
         </div>
       </header>
@@ -170,10 +241,10 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 <div
                   className={`h-12 w-12 rounded-full flex items-center justify-center mb-2 transition-all ${
                     currentStep === step.id
-                      ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200'
+                      ? 'bg-gradient-to-br from-sky-600 to-blue-600 text-white shadow-lg shadow-sky-200'
                       : (currentStep === 'merchants' && step.id === 'profile') ||
                         (currentStep === 'bank' && (step.id === 'profile' || step.id === 'merchants'))
-                      ? 'bg-indigo-100 text-indigo-600'
+                      ? 'bg-sky-100 text-sky-600'
                       : 'bg-slate-100 text-slate-400'
                   }`}
                 >
@@ -195,7 +266,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
               {index < array.length - 1 && (
                 <div className="flex-1 h-0.5 bg-slate-200 mx-4 mb-8">
                   <div
-                    className={`h-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-500 ${
+                    className={`h-full bg-gradient-to-r from-sky-600 to-blue-600 transition-all duration-500 ${
                       (currentStep === 'merchants' && step.id === 'profile') ||
                       (currentStep === 'bank' && step.id !== 'bank')
                         ? 'w-full'
@@ -273,7 +344,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 <Button
                   onClick={() => setCurrentStep('merchants')}
                   disabled={!canProceedProfile}
-                  className="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white"
+                  className="h-12 px-8 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white"
                 >
                   <span className="mr-2">Continue</span>
                   <ArrowRight className="h-5 w-5" />
@@ -327,7 +398,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                           onClick={() => handleMerchantToggle(merchant.id)}
                           className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all ${
                             isSelected
-                              ? 'border-indigo-600 bg-indigo-600'
+                              ? 'border-sky-600 bg-sky-600'
                               : 'border-slate-300 bg-white'
                           }`}
                         >
@@ -359,8 +430,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 })}
               </div>
 
-              <div className="flex items-center gap-2 p-4 bg-indigo-50 rounded-xl border border-indigo-200 mb-8">
-                <Lock className="h-5 w-5 text-indigo-600 flex-shrink-0" />
+              <div className="flex items-center gap-2 p-4 bg-sky-50 rounded-xl border border-sky-200 mb-8">
+                <Lock className="h-5 w-5 text-sky-600 flex-shrink-0" />
                 <p className="text-sm text-slate-700">
                   Your data is encrypted and secure. We only access transaction data to calculate your credit score.
                 </p>
@@ -378,7 +449,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 <Button
                   onClick={() => setCurrentStep('bank')}
                   disabled={!canProceedMerchants}
-                  className="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white"
+                  className="h-12 px-8 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white"
                 >
                   <span className="mr-2">Continue</span>
                   <ArrowRight className="h-5 w-5" />
@@ -447,8 +518,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-4 bg-indigo-50 rounded-xl border border-indigo-200 mb-8">
-                <Lock className="h-5 w-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-4 bg-sky-50 rounded-xl border border-sky-200 mb-8">
+                <Lock className="h-5 w-5 text-sky-600 flex-shrink-0 mt-0.5" />
                 <div className="text-sm text-slate-700">
                   <p className="mb-2">
                     <strong>Your security is our priority.</strong> We use bank-level encryption and never store your full account details.
@@ -471,7 +542,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 <Button
                   onClick={onComplete}
                   disabled={!canProceedBank}
-                  className="h-12 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white"
+                  className="h-12 px-8 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white"
                 >
                   <span className="mr-2">Complete Setup</span>
                   <CheckCircle2 className="h-5 w-5" />

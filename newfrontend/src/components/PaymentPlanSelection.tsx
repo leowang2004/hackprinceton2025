@@ -29,9 +29,9 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center mx-auto mb-4">
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center mx-auto mb-4">
             <Zap className="h-6 w-6 text-white animate-pulse" />
           </div>
           <h2 className="text-xl mb-2">Analyzing your credit...</h2>
@@ -43,7 +43,7 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
 
   if (!approved) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-50 flex items-center justify-center">
         <div className="max-w-md text-center">
           <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">⚠️</span>
@@ -98,7 +98,7 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-50">
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -110,7 +110,7 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
             <span>Back to Payment Options</span>
           </button>
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
               <Zap className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -158,11 +158,11 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
             >
               <div className={`relative bg-white rounded-2xl p-6 border-2 h-full ${
                 selectedPlanIndex === (plan.id - 1)
-                  ? 'border-indigo-600 shadow-xl shadow-indigo-100'
+                  ? 'border-sky-600 shadow-xl shadow-sky-100'
                   : 'border-slate-200 hover:border-slate-300'
               }`}>
                 {plan.recommended && (
-                  <div className="absolute -top-3 left-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs px-3 py-1 rounded-full">
+                  <div className="absolute -top-3 left-6 bg-gradient-to-r from-sky-600 to-blue-600 text-white text-xs px-3 py-1 rounded-full">
                     ⭐ Recommended
                   </div>
                 )}
@@ -208,7 +208,7 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
 
                 {/* Select Button */}
                 {selectedPlanIndex === (plan.id - 1) && (
-                  <div className="flex items-center justify-center gap-2 text-indigo-600 py-2 bg-indigo-50 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 text-sky-600 py-2 bg-sky-50 rounded-lg">
                     <CheckCircle2 className="h-5 w-5" />
                     <span>Selected</span>
                   </div>
@@ -255,7 +255,7 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
             disabled={selectedPlanIndex === null}
             className={`w-full py-6 rounded-xl text-lg ${
               selectedPlanIndex !== null
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
+                ? 'bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white'
                 : 'bg-slate-100 text-slate-400 cursor-not-allowed'
             }`}
           >
@@ -263,7 +263,7 @@ export function PaymentPlanSelection({ onSelectPlan, onBack }: PaymentPlanSelect
           </Button>
           {selectedPlanIndex !== null && (
             <p className="text-center text-sm text-slate-600 mt-4">
-              Your first payment of {formatCurrency(plans[selectedPlanIndex + 1].payments[0].amount)} will be processed today
+              Your first payment of {formatCurrency(plans[selectedPlanIndex].payments[0].amount)} will be processed today
             </p>
           )}
         </div>

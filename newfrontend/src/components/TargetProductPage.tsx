@@ -26,7 +26,7 @@ export function TargetProductPage({ onAddToCart, onBuyNow, onBack }: TargetProdu
               <div className="h-10 w-10 rounded-full bg-red-600 flex items-center justify-center">
                 <div className="h-6 w-6 rounded-full bg-white" />
               </div>
-              <span className="text-2xl">Target</span>
+              <span className="text-2xl">DoorDash</span>
             </div>
           </div>
         </div>
@@ -199,7 +199,7 @@ export function TargetProductPage({ onAddToCart, onBuyNow, onBack }: TargetProdu
                 onClick={onBuyNow}
                 className="w-full h-14 bg-red-600 hover:bg-red-700 text-white text-lg"
               >
-                Buy Now with WingsPay
+                Buy Now with Wings
               </Button>
               <Button 
                 onClick={onAddToCart}
@@ -220,13 +220,13 @@ export function TargetProductPage({ onAddToCart, onBuyNow, onBack }: TargetProdu
               </div>
             </div>
 
-            {/* WingsPay Promotion */}
+            {/* Wings Promotion */}
             <div className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="mb-1">Pay in 4 interest-free payments</div>
                   <div className="text-sm text-slate-600">
-                    $45/month with WingsPay
+                    $45/month with Wings
                   </div>
                 </div>
                 <ChevronRight className="h-5 w-5 text-indigo-600" />
@@ -236,11 +236,11 @@ export function TargetProductPage({ onAddToCart, onBuyNow, onBack }: TargetProdu
             {/* Target Circle */}
             <div className="mt-4 p-4 bg-white rounded-xl border border-slate-200">
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                   <div className="h-6 w-6 rounded-full bg-red-600 flex items-center justify-center">
                     <div className="h-3 w-3 rounded-full bg-white" />
                   </div>
-                  <span className="text-sm">Earn 1% with Target Circle</span>
+                  <span className="text-sm">DoorDash Rewards</span>
                 </div>
                 <span className="text-sm text-red-600">+$1.80</span>
               </div>
