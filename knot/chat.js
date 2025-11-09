@@ -123,11 +123,18 @@ async function generateSQLFromNaturalLanguage(naturalLanguageQuery) {
         total_discount, total_fee, total_tax, total_tip, adjustments_json
       - products: transaction_id, merchant_id, merchant_name, product_external_id, product_name, product_url,
         quantity, product_sub_total, product_total, product_unit_price, eligibility
+      - NESSIE_BILL: _ID, ACCOUNT_ID, CREATION_DATE, NICKNAME, PAYEE, PAYMENT_AMOUNT, PAYMENT_DATE, RECURRING_DATE
+      - NESSIE_DEPOSIT: _ID, AMOUNT, DESCRIPTION, MEDIUM, PAYEE_ID, TRANSACTION_DATE, TYPE
+      - NESSIE_LOAN: _ID, ACCOUNT_ID, AMOUNT, CREATION_DATE, CREDIT_SCORE, DESCRIPTION, MONTHLY_PAYMENT, TYPE
       
-      Relationships: products.transaction_id = transactions.transaction_id
+      Relationships: 
+      - products.transaction_id = transactions.transaction_id
+      - NESSIE_BILL, NESSIE_DEPOSIT, and NESSIE_LOAN are independent tables (no direct foreign keys)
       
-      Important: merchant_name values are case-sensitive. Use exact case: 'Amazon', 'Costco', 'Doordash', 'Instacart', 'Target', 'Ubereats', 'Walmart'
-      When filtering by merchant_name, use UPPER() or LOWER() functions for case-insensitive matching, or use the exact case as shown above.
+      Important: 
+      - merchant_name values are case-sensitive. Use exact case: 'Amazon', 'Costco', 'Doordash', 'Instacart', 'Target', 'Ubereats', 'Walmart'
+      - When filtering by merchant_name, use UPPER() or LOWER() functions for case-insensitive matching, or use the exact case as shown above.
+      - For Nessie tables, use the exact table names: NESSIE_BILL, NESSIE_DEPOSIT, NESSIE_LOAN (all uppercase)
     `;
     
     const prompt = `
@@ -325,7 +332,9 @@ Rules:
 - Use UPPERCASE for SQL keywords
 - Return only the SQL query, no explanations
 - Use proper table and column names as shown in the schema
-- When filtering by merchant_name, use UPPER(merchant_name) = UPPER('merchantname') for case-insensitive matching, or use exact case: 'Amazon', 'Costco', 'Doordash', 'Instacart', 'Target', 'Ubereats', 'Walmart'`
+- When filtering by merchant_name, use UPPER(merchant_name) = UPPER('merchantname') for case-insensitive matching, or use exact case: 'Amazon', 'Costco', 'Doordash', 'Instacart', 'Target', 'Ubereats', 'Walmart'
+- For Nessie tables (NESSIE_BILL, NESSIE_DEPOSIT, NESSIE_LOAN), use the exact uppercase table names
+- When querying bills, deposits, or loans, use the appropriate Nessie table`
             },
             {
               role: "user",
@@ -651,7 +660,7 @@ async function loadData() {
       console.log("[FALLBACK] Attempting to load from dummy_data.json...");
       
       // Fallback to dummy_data.json
-      const dummyDataPath = path.join(__dirname, "dummy_data.json");
+const dummyDataPath = path.join(__dirname, "dummy_data.json");
       try {
         const raw = fs.readFileSync(dummyDataPath, "utf8");
         knotData = JSON.parse(raw);
@@ -664,12 +673,12 @@ async function loadData() {
   } else {
     // Load from dummy_data.json
     const dummyDataPath = path.join(__dirname, "dummy_data.json");
-    try {
-      const raw = fs.readFileSync(dummyDataPath, "utf8");
-      knotData = JSON.parse(raw);
-      console.log(`[CONFIG] Loaded dummy_data.json with ${knotData.transactions?.length || 0} transactions`);
-    } catch (err) {
-      console.error(`[ERROR] Failed to load dummy_data.json from ${dummyDataPath}:`, err.message);
+try {
+  const raw = fs.readFileSync(dummyDataPath, "utf8");
+  knotData = JSON.parse(raw);
+  console.log(`[CONFIG] Loaded dummy_data.json with ${knotData.transactions?.length || 0} transactions`);
+} catch (err) {
+  console.error(`[ERROR] Failed to load dummy_data.json from ${dummyDataPath}:`, err.message);
       console.warn("[WARN] Continuing with empty data. Some features may not work.");
     }
   }
@@ -2253,7 +2262,14 @@ app.post("/cortex", async (req, res) => {
     }
     
     const formattedResults = formatSQLResults(result.results);
-    const answer = formatResultsAsText(result.results, result.query);
+    
+    // Use ChatGPT to format results into human-readable response
+    console.log(`[CORTEX] Formatting results with ChatGPT...`);
+    const answer = await formatResultsWithChatGPT(
+      result.results,
+      query.trim(),
+      result.query
+    );
     
     return res.json({
       query: result.query,
@@ -2301,7 +2317,15 @@ app.post("/chat", async (req, res) => {
       userMessage.toLowerCase().includes('get') ||
       userMessage.toLowerCase().includes('display') ||
       userMessage.toLowerCase().includes('spent') ||
-      userMessage.toLowerCase().includes('spending')
+      userMessage.toLowerCase().includes('spending') ||
+      userMessage.toLowerCase().includes('bill') ||
+      userMessage.toLowerCase().includes('bills') ||
+      userMessage.toLowerCase().includes('deposit') ||
+      userMessage.toLowerCase().includes('deposits') ||
+      userMessage.toLowerCase().includes('loan') ||
+      userMessage.toLowerCase().includes('loans') ||
+      userMessage.toLowerCase().includes('debt') ||
+      userMessage.toLowerCase().includes('payment')
     ));
     
     // If should try Cortex and Snowflake is configured, try Cortex first
@@ -2312,9 +2336,16 @@ app.post("/chat", async (req, res) => {
         if (!cortexResult.error && cortexResult.results) {
           // Format the results for display
           const formattedResults = formatSQLResults(cortexResult.results);
-          const answer = formatResultsAsText(cortexResult.results, cortexResult.query);
           
+          // Use ChatGPT to format results into human-readable response
           console.log(`[CHAT] Cortex query successful: ${cortexResult.rowCount} results`);
+          console.log(`[CHAT] Formatting results with ChatGPT...`);
+          
+          const answer = await formatResultsWithChatGPT(
+            cortexResult.results,
+            userMessage,
+            cortexResult.query
+          );
           
           return res.json({
             source: "snowflake_cortex",
@@ -2377,7 +2408,7 @@ function formatSQLResults(results) {
   });
 }
 
-// Helper function to format results as readable text
+// Helper function to format results as readable text (basic formatting)
 function formatResultsAsText(results, query) {
   if (!results || results.length === 0) {
     return "No results found for your query.";
@@ -2413,6 +2444,85 @@ function formatResultsAsText(results, query) {
   }
   
   return text;
+}
+
+/**
+ * Use ChatGPT to format SQL query results into a natural, human-readable response
+ * @param {Array} results - The raw SQL query results
+ * @param {string} userQuery - The original user question
+ * @param {string} sqlQuery - The SQL query that was executed
+ * @returns {Promise<string>} - A human-readable formatted response
+ */
+async function formatResultsWithChatGPT(results, userQuery, sqlQuery) {
+  if (!process.env.OPENAI_API_KEY) {
+    // Fallback to basic formatting if OpenAI is not available
+    console.log("[INFO] OpenAI not available, using basic formatting");
+    return formatResultsAsText(results, sqlQuery);
+  }
+
+  if (!results || results.length === 0) {
+    return "I couldn't find any data matching your query.";
+  }
+
+  try {
+    // Prepare the data for ChatGPT
+    const dataSummary = {
+      rowCount: results.length,
+      columns: Object.keys(results[0] || {}),
+      sampleRows: results.slice(0, 20).map(row => {
+        const formatted = {};
+        for (const [key, value] of Object.entries(row)) {
+          // Convert keys to lowercase for consistency
+          formatted[key.toLowerCase()] = value;
+        }
+        return formatted;
+      })
+    };
+
+    const prompt = `You are a helpful financial assistant. A user asked: "${userQuery}"
+
+I executed a SQL query and got ${dataSummary.rowCount} result(s). Here's the data:
+
+${JSON.stringify(dataSummary.sampleRows, null, 2)}
+
+${dataSummary.rowCount > 20 ? `(Showing first 20 of ${dataSummary.rowCount} results)` : ''}
+
+Please provide a natural, conversational response that:
+1. Directly answers the user's question
+2. Highlights key insights or numbers
+3. Is concise and easy to read (2-4 sentences for simple queries, slightly longer for complex ones)
+4. Uses natural language (e.g., "You've spent $1,234.56" instead of "Result 1: price_total: 1234.56")
+5. Formats numbers nicely with commas and currency symbols where appropriate
+6. If there are multiple results, summarize the key findings
+
+Do NOT include the raw data or technical details. Just provide a friendly, human-readable answer.`;
+
+    const completion = await openai.chat.completions.create({
+      model: MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful financial assistant that explains data in a clear, conversational way. Always format numbers nicely and use natural language."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.3, // Lower temperature for more consistent, factual responses
+      max_tokens: 500, // Limit response length for concise answers
+    });
+
+    const formattedAnswer = completion.choices[0].message.content.trim();
+    console.log("[CHATGPT] Formatted response generated");
+    
+    return formattedAnswer;
+  } catch (error) {
+    console.error("[ERROR] Failed to format results with ChatGPT:", error.message);
+    console.log("[INFO] Falling back to basic formatting");
+    // Fallback to basic formatting if ChatGPT fails
+    return formatResultsAsText(results, sqlQuery);
+  }
 }
 
 app.listen(PORT, async () => {
