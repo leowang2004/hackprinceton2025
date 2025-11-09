@@ -1,349 +1,191 @@
-# WingsPay - Intelligent BNPL Platform
+# OmniChannel Financial Coach
 
-A complete Buy Now Pay Later (BNPL) system with intelligent credit scoring, flexible payment plans, and React-based frontend.
+This repository contains two complementary experiences that turn raw purchase data into actionable financial coaching:
 
-## 🚀 Quick Start
+1. **iMessage Financial Coach** – a conversational assistant that pulls transactions from Snowflake, enriches them with Nessie + Knot data, and answers questions through Snowflake Cortex, OpenAI, and optional Dedalus Labs models. Responses are chunked and timed for a native iMessage feel via Photon’s iMessage Kit.
+2. **WingsPay Web App** – a React/Vite + Express experience that demonstrates a BNPL checkout flow, credit scoring dashboard, and rich merchant storefronts powered by the same data sources.
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm
-
-### 1. Install Dependencies
-
-**Backend:**
-```powershell
-cd C:\Users\leowh\Desktop\Desktop\hackprinceton2025
-npm install
-```
-
-**Frontend:**
-```powershell
-cd C:\Users\leowh\Desktop\Desktop\hackprinceton2025\newfrontend
-npm install
-```
-
-### 2. Start the Backend Server
-```powershell
-cd C:\Users\leowh\Desktop\Desktop\hackprinceton2025
-node server.js
-```
-
-**Server runs on:** http://localhost:3000
-- Backend API endpoints
-- Credit scoring service
-- Payment plan calculations
-
-### 3. Start the Frontend (Separate Terminal)
-```powershell
-cd C:\Users\leowh\Desktop\Desktop\hackprinceton2025\newfrontend
-npm run dev
-```
-
-**Frontend runs on:** http://localhost:5173
-- React + TypeScript + Vite
-- Full shopping and checkout experience
-- Hot reload for development
-
-### 4. Access the Application
-
-Open your browser to: **http://localhost:5173**
-
-## 🎯 Application Flow
-
-1. **Welcome Screen** - Introduction to WingsPay
-2. **Onboarding** - Quick onboarding flow
-3. **Connected Merchants** - Dashboard showing your connected stores
-   - Real-time credit score display
-   - Available credit limit
-   - Connected merchants count (from backend)
-4. **Product Selection** - Browse products at merchant stores
-5. **Shopping Cart** - Review items and see payment options
-6. **Checkout** - Choose payment method (WingsPay or traditional)
-7. **Payment Plan Selection** - Choose from flexible payment plans
-8. **Order Confirmation** - View payment schedule and order details
-
-## 📊 System Overview
-
-### Key Features:
-- ✅ **Comprehensive Credit Scoring** - Uses 4 data sources (transactions, bills, deposits, loans)
-- ✅ **Intelligent Loan Calculations** - Fluid algorithm based on creditworthiness
-- ✅ **Real-time Backend Integration** - All data fetched dynamically from API
-- ✅ **React Context API** - Centralized state management
-- ✅ **Dynamic Payment Plans** - 4, 6, and 12-month options
-- ✅ **Beautiful Modern UI** - Built with Tailwind CSS and Lucide icons
-- ✅ **Responsive Design** - Works on all devices
-
-## 📁 Project Structure
-
-```
-hackprinceton2025/
-├── backend/
-│   ├── server.js                # Main backend server
-│   ├── routes/
-│   │   ├── auth.js             # Authentication routes
-│   │   └── knot.js             # Knot API integration routes
-│   └── services/
-│       ├── creditScoreService.js   # Credit scoring logic
-│       └── knotService.js          # Knot API service
-├── dummydata.json              # Transaction data (Amazon purchases)
-├── dummybill.json              # Bill payment data (6 bills)
-├── dummydeposit.json           # Income/deposit data (4 deposits)
-├── dummyloan.json              # Loan/debt data (6 loans)
-├── newfrontend/
-│   ├── src/
-│   │   ├── App.tsx             # Main app component with routing
-│   │   ├── components/         # All UI components
-│   │   │   ├── ConnectedMerchantsLanding.tsx
-│   │   │   ├── ShoppingCart.tsx
-│   │   │   ├── ModernCheckout.tsx
-│   │   │   ├── PaymentPlanSelection.tsx
-│   │   │   └── OrderConfirmation.tsx
-│   │   ├── contexts/
-│   │   │   └── PaymentContext.tsx  # Global state management
-│   │   └── services/
-│   │       ├── api.ts          # API integration layer
-│   │       └── NetworkService.ts
-│   ├── package.json
-│   └── vite.config.ts
-├── FRONTEND_INTEGRATION.md
-├── CREDIT_ALGORITHM.md
-└── README.md
-```
-
-## 🧮 Credit Scoring Algorithm
-
-**Version:** Comprehensive (4 Data Sources)
-**Score Range:** 500-800
-**Target:** 650-750 (good credit)
-
-### Weighted Components:
-- **30%** - Transaction Spending Analysis
-  - Purchase frequency
-  - Transaction amounts
-  - Spending patterns
-- **25%** - Income from Deposits
-  - Regular deposits
-  - Income consistency
-  - Deposit amounts
-- **20%** - Bill Payment Reliability
-  - On-time payments
-  - Payment completion rate
-  - Bill types
-- **15%** - Debt Burden
-  - Outstanding loans
-  - Overdue amounts
-  - Debt-to-income ratio
-- **10%** - Account Balance
-  - Current balance
-  - Minimum balance maintenance
-
-### Loan Calculation (Fluid):
-- **Score 500:** ~$2,000 max credit
-- **Score 650:** ~$5,000 max credit
-- **Score 750:** ~$7,000 max credit
-- **Score 800:** ~$8,000 max credit
-
-### Payment Plans:
-Based on credit score and order total:
-- **4 months** - Standard (divide by 4)
-- **6 months** - Extended (order total × 0.18)
-- **12 months** - Flexible (order total × 0.095)
-
-## 🎯 Expected Results (with dummy data)
-
-Based on current dummy data files:
-- **Credit Score:** ~680-720
-- **Max Credit Limit:** ~$4,000-$6,000
-- **Cart Total:** $839.16 (3 audio products)
-- **Monthly Payment (4mo):** ~$209.79
-- **Status:** Approved ✅
-
-## � API Endpoints
-
-### Backend (http://localhost:3000)
-
-- **GET /api/get-credit-score**
-  - Returns credit score and lending offer
-  - Analyzes all 4 data sources
-  - Response: `{ creditScore, status, maxAmount, termMonths }`
-
-- **GET /api/get-merchants**
-  - Returns connected merchant information
-  - Response: `{ merchants: [...], totalConnected: 1 }`
-
-### Frontend API Service (api.ts)
-
-- **fetchCreditScore()** - Gets credit score from backend
-- **calculatePaymentPlans(orderTotal)** - Calculates payment plans
-- **formatCurrency(amount)** - Formats currency display
-
-## 🎨 Frontend Architecture
-
-### React Context Pattern
-All components use the `PaymentContext` for centralized state:
-
-```typescript
-const { 
-  cartTotal, 
-  creditScore, 
-  maxCreditLimit, 
-  approved, 
-  loading, 
-  paymentPlans,
-  selectedPlan,
-  connectedMerchantsCount
-} = usePayment();
-```
-
-### Key Features:
-- **Auto-refresh** - Fetches backend data when cart changes
-- **Loading states** - Shows "..." while fetching
-- **Error handling** - Graceful fallbacks
-- **Type safety** - Full TypeScript support
-
-## 🛠 Technologies
-
-### Backend:
-- Node.js & Express
-- RESTful API architecture
-- JSON file-based data storage
-- CORS enabled for frontend
-
-### Frontend:
-- React 18.3.1
-- TypeScript
-- Vite (build tool)
-- Tailwind CSS (styling)
-- Lucide React (icons)
-- React Router (navigation)
-
-## 🔧 Troubleshooting
-
-### Server won't start?
-```powershell
-# Kill existing node processes
-Stop-Process -Name node -Force -ErrorAction SilentlyContinue
-
-# Restart backend
-cd C:\Users\leowh\Desktop\Desktop\hackprinceton2025
-node server.js
-```
-
-### Frontend won't start?
-```powershell
-# Check if port 5173 is in use
-netstat -ano | findstr :5173
-
-# Restart frontend
-cd C:\Users\leowh\Desktop\Desktop\hackprinceton2025\newfrontend
-npm run dev
-```
-
-### "No built frontend found" message?
-This is normal for development! You're running two separate servers:
-- Backend API on port 3000
-- Frontend dev server on port 5173
-
-To build frontend for production (optional):
-```powershell
-cd newfrontend
-npm run build
-```
-
-### Data not showing in frontend?
-1. Check backend is running on http://localhost:3000
-2. Check frontend is running on http://localhost:5173
-3. Open browser console (F12) for error messages
-4. Look for console logs with emojis (🔄 🔍 ✅ 💳 📊)
-
-### Credit score seems wrong?
-- Check `dummydata.json`, `dummybill.json`, `dummydeposit.json`, `dummyloan.json`
-- Review `server.js` credit calculation logic
-- Check browser console for calculation logs
-
-## 📖 Documentation
-
-- **[APP_FLOW.md](./APP_FLOW.md)** - Complete application flow
-- **[KNOT_INTEGRATION.md](./KNOT_INTEGRATION.md)** - Knot API integration guide
-- **[FRONTEND_INTEGRATION.md](./FRONTEND_INTEGRATION.md)** - Frontend integration details
-- **[CREDIT_ALGORITHM.md](./CREDIT_ALGORITHM.md)** - Algorithm documentation
-
-## 🎉 Key Achievements
-
-1. **Zero Hardcoded Values** ✅
-   - All credit scores from backend
-   - All payment amounts calculated dynamically
-   - All merchant data from API
-
-2. **Centralized State Management** ✅
-   - React Context API for global state
-   - Single source of truth
-   - Auto-refresh on data changes
-
-3. **Beautiful User Experience** ✅
-   - Smooth animations and transitions
-   - Loading states and error handling
-   - Responsive design
-
-4. **Production-Ready Architecture** ✅
-   - Separation of concerns
-   - Type-safe TypeScript
-   - RESTful API design
-
-## 🚀 Testing the Application
-
-### 1. Test Backend Directly
-```powershell
-curl http://localhost:3000/api/get-credit-score
-```
-
-Expected response:
-```json
-{
-  "creditScore": 720,
-  "lendingOffer": {
-    "status": "Approved",
-    "maxAmount": 6000,
-    "termMonths": 9
-  }
-}
-```
-
-### 2. Test Full User Flow
-1. Open http://localhost:5173
-2. Navigate through: Welcome → Onboarding → Landing
-3. Check "Connected Merchants" page shows:
-   - Real credit score (from backend)
-   - Real available credit (from backend)
-   - Connected stores count: 1 (Amazon from dummydata.json)
-4. Go to Amazon → Add items → Cart → Checkout
-5. Select WingsPay
-6. Choose payment plan
-7. View order confirmation
-
-### 3. Verify Console Logs
-Open browser DevTools (F12) → Console tab:
-- 🔄 PaymentContext: Refreshing payment data
-- 🔍 Fetching credit score from: http://localhost:3000/api/get-credit-score
-- ✅ Backend Response Received: Credit Score: XXX
-- 💳 calculatePaymentPlans called with order total: 839.16
-- 📊 Backend Decision: Credit Score, Status, Max Credit
-- 📋 Generated Payment Plans: 3 plans
-
-## 🔮 Future Enhancements
-
-- [ ] Real Knot API integration (replace dummy data)
-- [ ] User authentication and sessions
-- [ ] Database integration (replace JSON files)
-- [ ] More merchant integrations
-- [ ] Payment processing integration
-- [ ] Credit score history tracking
-- [ ] Account management dashboard
-- [ ] Email notifications
+Together they showcase a full-stack “coach + checkout” story: ingest real merchant data, store it in Snowflake, reason over it with LLMs, and surface guidance in both chat and web surfaces.
 
 ---
 
-**Status:** ✅ Fully functional and ready to demo!  
-**Created for:** HackPrinceton 2025  
-**Version:** 4.0 (Dynamic Backend Integration)  
-**Architecture:** Two-server development (Backend :3000 + Frontend :5173)
+## Repository Layout
+
+```
+hackprinceton2025/
+├── dataset/                 # Scripts + CSVs for populating Snowflake from Knot & Nessie
+│   ├── knot_data/           # Knot TransactionLink pull + flatten to transactions/products CSVs
+│   └── nessie_data/         # Nessie API pulls for bills, deposits, loans
+├── iMessage_chatbot/        # Node chatbot + iMessage bridge + optional Dedalus FastAPI service
+├── knot/                    # Earliest Node chatbot prototype (kept for reference)
+├── newfrontend/             # React/Vite WingsPay web experience
+├── server.js                # Legacy Express backend used by WingsPay demo screens
+└── README.md                # You are here
+```
+
+Key datasets (`dataset/knot_data/*.csv`, `dataset/nessie_data/*.json`) can be used directly for Snowflake ingestion or local prototyping.
+
+---
+
+## Requirements
+
+- **Node.js** ≥ 18 (required for Express 5, `fetch`, and top-level `await`)
+- **npm** ≥ 9
+- **Python** ≥ 3.10 (3.11+ recommended) for the Dedalus bridge and data ingestion scripts
+- **Snowflake account** (optional, but required for live data queries)
+- **macOS with Messages** (required if you want to send iMessage replies via AppleScript)
+
+---
+
+## Environment Variables
+
+Create a `.env` in `iMessage_chatbot/` (and optionally in `dataset/knot_data/`) with the following variables as needed:
+
+| Variable | Purpose |
+| --- | --- |
+| `OPENAI_API_KEY` | Required for SQL fallback, response formatting, and recommendation generation when Dedalus is disabled |
+| `OPENAI_MODEL` | Override default OpenAI chat model (default `gpt-4o-mini`) |
+| `NESSIE_API_KEY`, `NESSIE_ACCOUNT_ID` | Capital One Nessie sandbox credentials for supplemental financial data |
+| `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_SCHEMA`, `SNOWFLAKE_WAREHOUSE` | Enable direct Snowflake connectivity |
+| `USE_SNOWFLAKE` | Set to `true` to force Snowflake usage (instead of `dummy_data.json`) |
+| `USE_DEDALUS_BRIDGE` | Set to `true` to proxy LLM calls through the Python Dedalus bridge |
+| `DEDALUS_BRIDGE_URL` | Base URL for the FastAPI bridge (default `http://localhost:8000`) |
+| `DEDALUS_API_KEY` (inside bridge) | API key required by Dedalus Labs SDK (set in shell or `.env` alongside the bridge) |
+| `CHAT_RESPONSE_CHUNK_SIZE`, `CHAT_RESPONSE_DELAY_MS` | Tune chunk length and delay for iMessage sending cadence |
+
+Snowflake loaders in `dataset/knot_data/` also expect the Snowflake variables above. The scripts rely on `.env` files sitting next to them.
+
+---
+
+## Data Ingestion Workflow
+
+1. **Install dependencies**
+   ```bash
+   cd /Users/Niki/gatech/hackprinceton2025/dataset/knot_data
+   python3 -m venv .venv && source .venv/bin/activate
+   pip install -r ../nessie_data/requirements.txt  # if you maintain a requirements file
+   pip install python-dotenv snowflake-connector-python
+   ```
+
+2. **Pull merchant transactions from Knot**
+   ```bash
+   python pull_knot.py
+   ```
+   This hits the Knot TransactionLink endpoint for Amazon, Costco, DoorDash, Instacart, Target, UberEats, and Walmart, flattening responses into `transactions.csv` and `products.csv`.
+
+3. **Pull supplemental data from Nessie**
+   ```bash
+   cd ../nessie_data
+   python pull_nessie.py
+   ```
+   Generates `bills.json`, `deposits.json`, and `loans.json`.
+
+4. **Load into Snowflake**
+   ```bash
+   cd ../knot_data
+   python upload_to_snowflake.py
+   ```
+   The script creates (or truncates) `TRANSACTIONS`, `PRODUCTS`, `NESSIE_BILL`, `NESSIE_DEPOSIT`, and `NESSIE_LOAN`, then uses `COPY INTO` to ingest the CSV/JSON data. Helper scripts `reload_transactions.py`, `reload_products.py`, and `reload_all.py` support quick refreshes.
+
+Once loaded, Snowflake Cortex can reason over the combined dataset, and both the chatbot and web experiences can surface insights.
+
+---
+
+## iMessage Financial Coach
+
+### What It Does
+
+- Serves `/chat`, `/cortex`, and analytics endpoints from `iMessage_chatbot/chat.js`.
+- Creates Snowflake connections on demand, runs SQL produced by Cortex/Dedalus/OpenAI, and reformats results into conversational English.
+- Detects shopping/review intents, produces recommendations, and warns about redundant purchases.
+- Chunks and delays outgoing messages so Photon iMessage Kit can send them sequentially via AppleScript.
+- Optionally routes prompt interpretation, SQL generation, and summarization through Dedalus Labs (`dedalus_bridge.py`).
+
+### Getting Started
+
+```bash
+# Terminal 1 – start the Node chatbot
+cd /Users/Niki/gatech/hackprinceton2025/iMessage_chatbot
+npm install
+node chat.js
+
+# Terminal 2 – (optional) start the Dedalus bridge
+cd /Users/Niki/gatech/hackprinceton2025/iMessage_chatbot
+python -m venv .venv && source .venv/bin/activate
+pip install -r dedalus_bridge_requirements.txt  # contains fastapi, uvicorn, dedalus-labs, python-dotenv
+python dedalus_bridge.py
+
+# Terminal 3 – run the Photon iMessage agent
+node imessage-bot.js
+```
+
+Put the target phone number and AppleScript permissions in `imessage-bot.js` as needed. The bot will forward inbound iMessages to `/chat`, then stream the resulting chunks back out with configurable pauses.
+
+Testing without a phone is possible by hitting the REST endpoints directly:
+
+```bash
+curl -X POST http://localhost:3000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"What did I spend at Costco last month?","useCortex":true}'
+```
+
+If Snowflake is disabled (`USE_SNOWFLAKE` unset), the chatbot falls back to `dummy_data.json`.
+
+---
+
+## WingsPay Web App
+
+The `newfrontend/` directory houses a Vite + React BNPL demo that consumes the legacy Express backend (`server.js`) and the dummy JSON datasets. It remains useful for storytelling about financing flows even if the chatbot is the primary surface.
+
+### Setup
+
+```bash
+# Install dependencies
+cd /Users/Niki/gatech/hackprinceton2025
+npm install        # installs shared utilities
+
+cd newfrontend
+npm install
+
+# Start backend (legacy demo services)
+cd ..
+node server.js     # serves API mocks on http://localhost:3000
+
+# Start frontend
+cd newfrontend
+npm run dev        # launches http://localhost:5173
+```
+
+Available endpoints from `server.js` include `/api/get-credit-score` and `/api/get-merchants`, both built on top of the dummy JSON files at the repository root. The React app uses `PaymentContext` to orchestrate state across onboarding, merchant selection, cart, checkout, and confirmation screens. A production build is available via `npm run build`.
+
+---
+
+## Testing & Tooling Tips
+
+- **Chatbot** – exercise `/chat` and `/cortex` with curl or Postman; observe SQL generation in the console to ensure Cortex and fallback OpenAI/Dedalus paths behave.
+- **Snowflake** – use `dataset/knot_data/query_snowflake.py` for quick interactive queries.
+- **iMessage** – run the Photon agent in verbose mode to confirm chunk timing; adjust `CHAT_RESPONSE_DELAY_MS` if messages feel too fast/slow.
+- **Frontend** – rely on Vite’s hot reload (`npm run dev`) for UI tweaks; `test-backend.js` contains sample requests against `server.js`.
+
+---
+
+## Troubleshooting
+
+- **Invalid Snowflake credentials** – the chatbot logs connection attempts; double-check account identifier format (e.g., `xyz12345.us-east-1`).
+- **SQL syntax issues** – Cortex output is cleaned and validated, but edge cases happen. Enable Dedalus bridge or tweak prompt instructions inside `chat.js`.
+- **iMessage AppleScript errors** – ensure “Automation” permissions are granted to Terminal/iTerm for Messages control; review Photon iMessage Kit docs for setup.
+- **Dedalus bridge import error** – install the SDK via `pip install dedalus-labs` inside the same venv running `dedalus_bridge.py`.
+- **Frontend data mismatch** – legacy web app still uses local JSON data; update `server.js` or wire it to Snowflake if you need parity with the chatbot.
+
+---
+
+## Next Steps & Ideas
+
+- Swap dummy datasets for real-time Knot webhooks and persist them straight into Snowflake.
+- Align the WingsPay frontend with the live Snowflake warehouse to showcase unified analytics.
+- Productionize the AppleScript bridge by migrating to Business Chat APIs or Twilio for cross-platform messaging.
+- Expand Dedalus usage for report generation, not just intent routing and summarization.
+
+---
+
+**Created for HackPrinceton 2025** — blending fintech data engineering with conversational AI to deliver personalized financial guidance across channels.
