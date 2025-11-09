@@ -215,12 +215,12 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           </motion.div>
           
           <motion.h1 
-            className="text-7xl mb-6 text-white leading-tight"
+            className="text-5xl md:text-7xl mb-6 bg-gradient-to-r from-white via-indigo-100 to-purple-100 bg-clip-text text-transparent leading-tight whitespace-nowrap"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Unlock with <span className="text-sky-300">Wings</span>
+            Spend with <span className="font-semibold italic text-sky-300 text-[1.15em] align-baseline font-[Playfair]">Wings</span>, Land with Control
           </motion.h1>
           
           <motion.p 
@@ -229,8 +229,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.6 }}
           >
-            Your spending tells a story. We turn it into opportunities—<br />
-            smarter credit decisions powered by what you actually do.
+            Stress-easing lending with smart alerts that keep your balance safe
           </motion.p>
         </div>
 
