@@ -13,7 +13,7 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
   
   // Calculate payment amounts
   const monthlyPayment = selectedPlan ? selectedPlan.monthly : 0;
-  const numPayments = selectedPlan ? selectedPlan.termMonths : 4;
+  const numPayments = selectedPlan ? selectedPlan.months : 4;
   
   // Calculate subtotal (before tax)
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
