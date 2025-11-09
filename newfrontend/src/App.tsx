@@ -7,6 +7,8 @@ import { AmazonProductPage } from './components/AmazonProductPage';
 import { WayfairProductPage } from './components/WayfairProductPage';
 import { BestBuyProductPage } from './components/BestBuyProductPage';
 import { TargetProductPage } from './components/TargetProductPage';
+import { GenericProductPage } from './components/GenericProductPage';
+import { WalmartProductPage } from './components/WalmartProductPage';
 import { ShoppingCart } from './components/ShoppingCart';
 import { ModernCheckout } from './components/ModernCheckout';
 import { PaymentPlanSelection } from './components/PaymentPlanSelection';
@@ -83,7 +85,64 @@ function AppContent({
         price: 170.99, // RedCard price (5% off $179.99, which is 22% off $229.99)
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=400'
-      }]
+      }],
+      walmart: [{
+        id: 'wm-1',
+        name: 'Samsung 55" 4K Smart TV',
+        price: 448.00,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1585128792020-803d29415281?w=1200&auto=format&fit=crop&q=80'
+      }],
+      // Fallback demo items for explore merchants
+      instacart: [{
+        id: 'exp-instacart-1',
+        name: 'Weekly Grocery Bundle',
+        price: 89.99,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=400'
+      }],
+      sephora: [{
+        id: 'exp-sephora-1',
+        name: 'Beauty Essentials Set',
+        price: 129.00,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400'
+      }],
+      zara: [{
+        id: 'exp-zara-1',
+        name: 'Classic Trench Coat',
+        price: 159.00,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1520975916090-3105956dac38?w=400'
+      }],
+      lululemon: [{
+        id: 'exp-lululemon-1',
+        name: 'Align High-Rise Pant 25"',
+        price: 118.00,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1534367610401-9f00a1e0c1a9?w=400'
+      }],
+      alo: [{
+        id: 'exp-alo-1',
+        name: 'Airlift Yoga Leggings',
+        price: 108.00,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1520975682038-c710c4e9659d?w=400'
+      }],
+      baccarat: [{
+        id: 'exp-baccarat-1',
+        name: 'Crystal Vase – Harcourt',
+        price: 690.00,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1603566234499-59a3ed8bbfd4?w=400'
+      }],
+      nike: [{
+        id: 'exp-nike-1',
+        name: 'Nike Air Zoom Pegasus',
+        price: 130.00,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400'
+      }],
     };
     
     return merchantProducts[merchantId] || [];
@@ -153,7 +212,7 @@ function AppContent({
   };
 
   const handleStartOver = () => {
-    setCurrentStep('welcome');
+    setCurrentStep('landing');
     setSelectedMerchant(null);
     setCartItems([]); // Clear cart on start over
   };
@@ -203,6 +262,22 @@ function AppContent({
         />
       )}
 
+      {/* Fallback product page for explore merchants */}
+      {currentStep === 'product' &&
+        selectedMerchant &&
+        !['amazon','wayfair','bestbuy','target'].includes(selectedMerchant) && (
+        <GenericProductPage
+          merchantName={selectedMerchant.charAt(0).toUpperCase() + selectedMerchant.slice(1)}
+          product={(loadMerchantProduct(selectedMerchant)[0]) || {
+            name: 'Featured Product',
+            price: 99.0,
+            image: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400'
+          }}
+          onAddToCart={handleAddToCart}
+          onBuyNow={handleBuyNow}
+          onBack={handleBackToLanding}
+        />
+      )}
       {currentStep === 'product' && selectedMerchant === 'bestbuy' && (
         <BestBuyProductPage 
           onAddToCart={handleAddToCart}
@@ -213,6 +288,14 @@ function AppContent({
 
       {currentStep === 'product' && selectedMerchant === 'target' && (
         <TargetProductPage 
+          onAddToCart={handleAddToCart}
+          onBuyNow={handleBuyNow}
+          onBack={handleBackToLanding}
+        />
+      )}
+
+      {currentStep === 'product' && selectedMerchant === 'walmart' && (
+        <WalmartProductPage
           onAddToCart={handleAddToCart}
           onBuyNow={handleBuyNow}
           onBack={handleBackToLanding}

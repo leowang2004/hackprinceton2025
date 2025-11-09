@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, CheckCircle2, User, ShoppingBag, Building2, Lock, ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, ArrowRight, CheckCircle2, User, ShoppingBag, Building2, Lock, ExternalLink, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -25,6 +26,40 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     routingNumber: '',
     accountNumber: '',
   });
+
+  const handleSkipStep = () => {
+    if (currentStep === 'profile') {
+      setProfileData({
+        firstName: 'Sarah',
+        lastName: 'Johnson',
+        email: 'sarah.johnson@email.com',
+        phone: '(555) 234-5678',
+      });
+      setTimeout(() => {
+        setCurrentStep('merchants');
+      }, 500);
+    } else if (currentStep === 'merchants') {
+      const demoMerchants = ['amazon', 'doordash', 'bestbuy'];
+      setSelectedMerchants(demoMerchants);
+      const tokens: Record<string, string> = {};
+      demoMerchants.forEach((id) => {
+        tokens[id] = `${id}_demo_token_verified`;
+      });
+      setMerchantTokens(tokens);
+      setTimeout(() => {
+        setCurrentStep('bank');
+      }, 500);
+    } else if (currentStep === 'bank') {
+      setBankData({
+        accountName: 'Sarah Johnson',
+        routingNumber: '021000021',
+        accountNumber: '1234567890',
+      });
+      setTimeout(() => {
+        onComplete();
+      }, 500);
+    }
+  };
 
   const merchants = [
     { id: 'amazon', name: 'Amazon', icon: '🛒', color: 'from-orange-500 to-amber-500' },
@@ -61,11 +96,70 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-              <span className="text-xl">✦</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                <span className="text-xl">✦</span>
+              </div>
+              <span className="text-xl tracking-tight">WingsPay</span>
             </div>
-            <span className="text-xl tracking-tight">WingsPay</span>
+
+            <div className="ml-auto relative">
+              <motion.div
+                className="absolute inset-0 rounded-xl"
+                animate={{
+                  boxShadow: [
+                    '0 0 0 0 rgba(99, 102, 241, 0.4)',
+                    '0 0 0 8px rgba(99, 102, 241, 0)',
+                    '0 0 0 0 rgba(99, 102, 241, 0)',
+                  ],
+                }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+              />
+              <motion.div
+                className="absolute inset-0 rounded-xl"
+                animate={{
+                  boxShadow: [
+                    '0 0 0 0 rgba(168, 85, 247, 0.4)',
+                    '0 0 0 8px rgba(168, 85, 247, 0)',
+                    '0 0 0 0 rgba(168, 85, 247, 0)',
+                  ],
+                }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 1 }}
+              />
+              <motion.div
+                className="absolute -top-2 -right-2 text-yellow-400"
+                animate={{
+                  y: [-2, -8, -2],
+                  rotate: [0, 180, 360],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Sparkles className="h-4 w-4" />
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={handleSkipStep}
+                  className="relative overflow-hidden h-11 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    animate={{ x: ['-200%', '200%'] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 0.5, ease: 'easeInOut' }}
+                  />
+                  <span className="relative z-10 flex items-center gap-2">
+                    <motion.span
+                      animate={{ rotate: [0, 20, 0] }}
+                      transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 1 }}
+                    >
+                      ⚡
+                    </motion.span>
+                    <span>Skip for Demo Efficiency</span>
+                  </span>
+                </Button>
+              </motion.div>
+            </div>
           </div>
         </div>
       </header>

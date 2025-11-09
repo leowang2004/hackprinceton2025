@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { calculatePaymentPlans, formatCurrency, type PaymentPlan } from '../services/api';
-
+//import { calculatePaymentPlans, fetchCreditScore, type PaymentPlan } from '../services/api';
 interface CartItem {
   id: string;
   name: string;
@@ -88,6 +88,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     const fetchMerchants = async () => {
       try {
         const response = await fetch('http://localhost:3000/api/get-merchants');
+        //const response = await fetch('http://localhost:3001/api/get-merchants');
         const data = await response.json();
         setConnectedMerchantsCount(data.totalConnected || 0);
       } catch (error) {
@@ -96,6 +97,31 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       }
     };
     fetchMerchants();
+  }, []);
+
+  // Load initial credit score on first visit (when cart is empty)
+  useEffect(() => {
+    const fetchInitialScore = async () => {
+      if (cartTotal !== 0) return; // cart flow will handle scoring
+      try {
+        setLoading(true);
+        const res = await fetch('http://localhost:3000/api/get-credit-score');
+        const data = await res.json();
+        if (data) {
+          setCreditScore(Number(data.creditScore) || 0);
+          const offer = data.lendingOffer || {};
+          setMaxCreditLimit(Number(offer.maxAmount) || 0);
+          setApproved(offer.status === 'Approved');
+        }
+      } catch (err) {
+        console.error('Error fetching initial credit score:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInitialScore();
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Calculate cart total from items (including tax)
