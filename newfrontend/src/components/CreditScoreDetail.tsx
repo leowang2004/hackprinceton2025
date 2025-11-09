@@ -49,11 +49,11 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
             <span>Back to Dashboard</span>
           </button>
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl">Your WingsPay Score</h1>
+              <h1 className="text-3xl">Your Wings Score</h1>
               <p className="text-slate-600">Alternative credit scoring powered by your financial data</p>
             </div>
           </div>
@@ -65,7 +65,7 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
           {/* Main Score Display */}
           <div className="lg:col-span-2 space-y-8">
             {/* Score Card */}
-            <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl p-8 text-white">
+            <div className="bg-gradient-to-br from-sky-600 to-blue-600 rounded-3xl p-8 text-white">
               <div className="flex items-start justify-between mb-8">
                 <div>
                   <div className="text-sm opacity-90 mb-2">Your Current Score</div>
@@ -170,9 +170,9 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
               </div>
 
               {/* Info Box */}
-              <div className="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100 flex gap-3">
-                <Info className="h-5 w-5 text-indigo-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-indigo-900">
+              <div className="mt-6 p-4 bg-sky-50 rounded-xl border border-sky-100 flex gap-3">
+                <Info className="h-5 w-5 text-sky-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-sky-900">
                   <strong>Alternative Credit Scoring:</strong> Unlike traditional credit bureaus, we analyze your real financial behavior 
                   from banking and merchant data to provide a more accurate and fair credit assessment.
                 </div>
@@ -199,19 +199,19 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
                           <div
                             className={`w-full rounded-t-lg transition-all cursor-pointer ${
                               isSelected
-                                ? 'ring-4 ring-indigo-400 ring-offset-2'
+                                ? 'ring-4 ring-sky-400 ring-offset-2'
                                 : ''
                             } ${
                               data.current
-                                ? 'bg-gradient-to-t from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
-                                : data.future
-                                ? 'bg-gradient-to-t from-indigo-300 to-purple-300 opacity-60 hover:opacity-80'
+                                ? 'bg-gradient-to-t from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500'
+                              : data.future
+                                ? 'bg-gradient-to-t from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500'
                                 : 'bg-slate-300 hover:bg-slate-400'
                             }`}
                             style={{ height: `${((data.score - 600) / 250) * 100}%` }}
                           />
                           {isSelected && (
-                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-sky-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
                               ${(data.limit / 1000).toFixed(1)}k
                             </div>
                           )}
@@ -219,14 +219,14 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
                         <div className="text-center">
                           <div className={`text-sm mb-1 transition-all ${
                             isSelected 
-                              ? 'text-indigo-600' 
+                              ? 'text-sky-600' 
                               : data.current 
                               ? 'text-slate-900' 
                               : 'text-slate-600'
                           }`}>
                             {data.score}
                           </div>
-                          <div className={`text-xs ${isSelected ? 'text-indigo-600' : 'text-slate-500'}`}>
+                            <div className={`text-xs ${isSelected ? 'text-sky-600' : 'text-slate-500'}`}>
                             {data.month}
                           </div>
                         </div>
@@ -251,7 +251,7 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
                 </div>
                 <div className="bg-slate-50 rounded-xl p-4">
                   <div className="text-sm text-slate-600 mb-1">Projected Limit (3 months)</div>
-                  <div className="text-2xl text-indigo-600 mb-1">
+                  <div className="text-2xl text-sky-600 mb-1">
                     ${projectedData.limit.toLocaleString()}
                   </div>
                   <div className="text-xs text-slate-600">Score: {projectedData.score} ({projectedData.month})</div>
@@ -371,7 +371,7 @@ export function CreditScoreDetail({ onBack }: CreditScoreDetailProps) {
                 </div>
               </div>
 
-              <Button className="w-full mt-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
+              <Button className="w-full mt-4 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white">
                 Request Credit Increase
               </Button>
             </div>

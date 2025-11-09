@@ -126,14 +126,14 @@ export function ShoppingCart({ onProceedToCheckout, onBack }: ShoppingCartProps)
 
               <Button
                 onClick={onProceedToCheckout}
-                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-6 rounded-xl"
+                className="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white py-6 rounded-xl"
               >
                 Proceed to Checkout
               </Button>
 
-              <div className="mt-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-                <div className="text-sm text-indigo-900 mb-1">💳 Pay with WingsPay</div>
-                <div className="text-sm text-indigo-700">
+              <div className="mt-6 p-4 bg-sky-50 rounded-lg border border-sky-100">
+                <div className="text-sm text-sky-900 mb-1">💳 Pay with Wings</div>
+                <div className="text-sm text-sky-700">
                   Split into 4 payments of <span className="font-medium">{approved && monthlyPayment > 0 ? formatCurrency(monthlyPayment) : 'checking...'}</span>
                 </div>
               </div>

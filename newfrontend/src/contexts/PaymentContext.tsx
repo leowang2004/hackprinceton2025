@@ -98,6 +98,29 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     fetchMerchants();
   }, []);
 
+  // Initial load: compute credit score and available credit on first visit
+  useEffect(() => {
+    const fetchInitialScore = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('http://localhost:3000/api/get-credit-score');
+        if (!res.ok) throw new Error('Failed to fetch initial credit score');
+        const data = await res.json();
+        setCreditScore(Number(data?.creditScore) || 0);
+        const offer = data?.lendingOffer || {};
+        setMaxCreditLimit(Number(offer?.maxAmount) || 0);
+        setApproved(offer?.status === 'Approved');
+      } catch (err) {
+        console.error('Error fetching initial score:', err);
+        setApproved(false);
+        setMaxCreditLimit(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInitialScore();
+  }, []);
+
   // Calculate cart total from items (including tax)
   useEffect(() => {
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);

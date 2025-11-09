@@ -25,10 +25,10 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
               <span className="text-xl">✦</span>
             </div>
-            <span className="text-xl tracking-tight">WingsPay</span>
+            <span className="text-xl tracking-tight">Wings</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -55,7 +55,7 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
         {/* Payment Plan Summary */}
         <div className="bg-white rounded-2xl p-8 border border-slate-200 mb-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
               <Calendar className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -87,9 +87,9 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
             </div>
           </div>
 
-          <div className="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center gap-3">
-            <Mail className="h-5 w-5 text-indigo-600" />
-            <span className="text-sm text-indigo-900">
+          <div className="mt-6 p-4 bg-sky-50 rounded-xl border border-sky-100 flex items-center gap-3">
+            <Mail className="h-5 w-5 text-sky-600" />
+            <span className="text-sm text-sky-900">
               Payment reminders will be sent to your email 2 days before each payment
             </span>
           </div>
@@ -170,7 +170,7 @@ export function OrderConfirmation({ onStartOver }: OrderConfirmationProps) {
         <div className="grid md:grid-cols-2 gap-4">
           <Button
             onClick={onStartOver}
-            className="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl"
+            className="w-full py-6 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white rounded-xl"
           >
             Continue Shopping
           </Button>

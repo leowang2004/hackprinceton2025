@@ -75,21 +75,21 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
               <h2 className="text-xl mb-6">Payment Method</h2>
               
               <div className="space-y-4">
-                {/* WingsPay - Featured */}
+                {/* Wings - Featured */}
                 <button
                   onClick={onSelectWingsPay}
                   className="w-full group relative"
                 >
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl opacity-75 group-hover:opacity-100 blur transition-all duration-300" />
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-600 to-blue-600 rounded-2xl opacity-75 group-hover:opacity-100 blur transition-all duration-300" />
                   <div className="relative bg-white rounded-2xl p-6 border-2 border-transparent">
                     <div className="flex items-center gap-4">
-                      <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center flex-shrink-0">
+                      <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center flex-shrink-0">
                         <Zap className="h-7 w-7 text-white" />
                       </div>
                       <div className="flex-1 text-left">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-lg">WingsPay</span>
-                          <span className="text-xs bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-2 py-1 rounded-full">
+                          <span className="text-lg">Wings</span>
+                          <span className="text-xs bg-gradient-to-r from-sky-600 to-blue-600 text-white px-2 py-1 rounded-full">
                             Recommended
                           </span>
                         </div>
@@ -104,7 +104,7 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
                             </span>
                           )}
                         </div>
-                        <div className="text-xs text-indigo-600 mt-1">
+                        <div className="text-xs text-sky-600 mt-1">
                           ✦ {approved ? 'Pre-approved' : 'Check eligibility'} • 0% APR • No hidden fees
                           {!loading && !approved && maxCreditLimit > 0 && (
                             <div className="text-xs text-slate-500 mt-1">
@@ -113,7 +113,7 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
                           )}
                         </div>
                       </div>
-                      <div className="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="text-sky-600 opacity-0 group-hover:opacity-100 transition-opacity">
                         →
                       </div>
                     </div>
@@ -143,10 +143,10 @@ export function ModernCheckout({ onSelectWingsPay, onBack }: ModernCheckoutProps
                 </button>
               </div>
 
-              {/* WingsPay Benefits */}
-              <div className="mt-6 p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
-                <div className="text-sm text-indigo-900 mb-3">Why choose WingsPay?</div>
-                <div className="space-y-2 text-sm text-indigo-700">
+              {/* Wings Benefits */}
+              <div className="mt-6 p-6 bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl border border-sky-100">
+                <div className="text-sm text-sky-900 mb-3">Why choose Wings?</div>
+              <div className="space-y-2 text-sm text-sky-700">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4" />
                     <span>Split into 4 payments, 0% interest</span>

@@ -53,6 +53,11 @@ function AppContent({
 }) {
   const { setCartItems } = usePayment();
 
+  // Ensure we scroll to the top whenever the page/step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep, selectedMerchant]);
+
   // Define merchant-specific products
   const loadMerchantProduct = (merchantId: string) => {
     const merchantProducts: Record<string, any> = {
@@ -72,15 +77,23 @@ function AppContent({
       }],
       bestbuy: [{
         id: 'bb-1',
-        name: 'Sony WH-1000XM5 Wireless Noise-Canceling Headphones',
-        price: 349.99, // Sale price (Save $50 from $399.99)
+        name: 'XPS 13 13.4" FHD+ Laptop (Intel Core i7, 16GB RAM, 512GB SSD)',
+        price: 349.99, // Demo price
         quantity: 1,
-        image: 'https://images.unsplash.com/photo-1604780032295-9f8186eede96?w=400'
+        image: 'https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=400'
       }],
       target: [{
         id: 'tgt-1',
         name: 'Nespresso Vertuo Next Coffee and Espresso Maker with Aeroccino',
         price: 170.99, // RedCard price (5% off $179.99, which is 22% off $229.99)
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=400'
+      }],
+      // Use the Target page for DoorDash as requested; mirror Target item so cart/checkout work
+      doordash: [{
+        id: 'dd-1',
+        name: 'Nespresso Vertuo Next Coffee and Espresso Maker with Aeroccino',
+        price: 170.99,
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=400'
       }]
@@ -153,7 +166,7 @@ function AppContent({
   };
 
   const handleStartOver = () => {
-    setCurrentStep('welcome');
+    setCurrentStep('landing');
     setSelectedMerchant(null);
     setCartItems([]); // Clear cart on start over
   };
@@ -211,7 +224,7 @@ function AppContent({
         />
       )}
 
-      {currentStep === 'product' && selectedMerchant === 'target' && (
+      {currentStep === 'product' && selectedMerchant === 'doordash' && (
         <TargetProductPage 
           onAddToCart={handleAddToCart}
           onBuyNow={handleBuyNow}

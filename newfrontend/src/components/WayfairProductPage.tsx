@@ -177,7 +177,7 @@ export function WayfairProductPage({ onAddToCart, onBuyNow, onBack }: WayfairPro
                 onClick={onBuyNow}
                 className="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white text-lg"
               >
-                Buy Now with WingsPay
+                Buy Now with Wings
               </Button>
               <Button 
                 onClick={onAddToCart}
@@ -198,13 +198,13 @@ export function WayfairProductPage({ onAddToCart, onBuyNow, onBack }: WayfairPro
               </div>
             </div>
 
-            {/* WingsPay Promotion */}
+            {/* Wings Promotion */}
             <div className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="mb-1">Pay in 4 interest-free payments</div>
                   <div className="text-sm text-slate-600">
-                    $200/month with WingsPay
+                    $200/month with Wings
                   </div>
                 </div>
                 <ChevronRight className="h-5 w-5 text-indigo-600" />

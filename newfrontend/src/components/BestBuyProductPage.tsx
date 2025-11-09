@@ -37,7 +37,7 @@ export function BestBuyProductPage({ onAddToCart, onBuyNow, onBack }: BestBuyPro
             <div className="aspect-square bg-white rounded-2xl mb-4 overflow-hidden border border-slate-200 flex items-center justify-center p-8">
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=800&q=80"
-                alt="Sony WH-1000XM5 Headphones"
+                alt="Dell XPS 13 Laptop"
                 className="w-full h-full object-contain"
               />
             </div>
@@ -71,10 +71,10 @@ export function BestBuyProductPage({ onAddToCart, onBuyNow, onBack }: BestBuyPro
               </div>
               <div className="text-sm text-blue-600 mb-2">SONY</div>
               <h1 className="text-4xl mb-3">
-                WH-1000XM5 Wireless Noise-Canceling Headphones
+                XPS 13 13.4&quot; FHD+ Laptop (Intel Core i7, 16GB RAM, 512GB SSD)
               </h1>
               <p className="text-slate-600 mb-4">
-                Industry-leading noise cancellation with Premium Sound Quality - Black
+                Ultra‑portable 13.4-inch laptop with Intel Core i7, 16GB RAM and 512GB SSD — Platinum
               </p>
               
               {/* Rating */}
@@ -112,9 +112,9 @@ export function BestBuyProductPage({ onAddToCart, onBuyNow, onBack }: BestBuyPro
                     ✓
                   </div>
                   <div>
-                    <div className="mb-1">Industry-Leading Noise Cancellation</div>
+                    <div className="mb-1">12th Gen Intel Core i7 Processor</div>
                     <div className="text-sm text-slate-600">
-                      Advanced ANC with 8 microphones for superior sound isolation
+                      Fast performance for multitasking and productivity
                     </div>
                   </div>
                 </div>
@@ -123,9 +123,9 @@ export function BestBuyProductPage({ onAddToCart, onBuyNow, onBack }: BestBuyPro
                     ✓
                   </div>
                   <div>
-                    <div className="mb-1">30-Hour Battery Life</div>
+                    <div className="mb-1">16GB RAM + 512GB SSD</div>
                     <div className="text-sm text-slate-600">
-                      All-day power with quick charging (3 min = 3 hours)
+                      Snappy performance and quick app launches with ample storage
                     </div>
                   </div>
                 </div>
@@ -134,9 +134,9 @@ export function BestBuyProductPage({ onAddToCart, onBuyNow, onBack }: BestBuyPro
                     ✓
                   </div>
                   <div>
-                    <div className="mb-1">Premium Sound Quality</div>
+                    <div className="mb-1">13.4&quot; FHD+ InfinityEdge Display</div>
                     <div className="text-sm text-slate-600">
-                      LDAC audio codec and DSEE Extreme upscaling
+                      Vivid edge-to-edge visuals in a compact form factor
                     </div>
                   </div>
                 </div>
@@ -191,7 +191,7 @@ export function BestBuyProductPage({ onAddToCart, onBuyNow, onBack }: BestBuyPro
                 onClick={onBuyNow}
                 className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white text-lg"
               >
-                Buy Now with WingsPay
+                Buy Now with Wings
               </Button>
               <Button 
                 onClick={onAddToCart}
@@ -211,13 +211,13 @@ export function BestBuyProductPage({ onAddToCart, onBuyNow, onBack }: BestBuyPro
               </div>
             </div>
 
-            {/* WingsPay Promotion */}
+            {/* Wings Promotion */}
             <div className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="mb-1">Pay in 4 interest-free payments</div>
                   <div className="text-sm text-slate-600">
-                    $87.50/month with WingsPay
+                    $87.50/month with Wings
                   </div>
                 </div>
                 <ChevronRight className="h-5 w-5 text-indigo-600" />

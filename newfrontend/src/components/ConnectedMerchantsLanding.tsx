@@ -1,7 +1,5 @@
-import { Store, ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, Sparkles, Plus } from 'lucide-react';
+import { Store, ShoppingBag, ArrowRight, TrendingUp, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from './ui/button';
-import { AddConnectionDialog } from './AddConnectionDialog';
 import { usePayment } from '../contexts/PaymentContext';
 import { formatCurrency } from '../services/api';
 
@@ -11,7 +9,6 @@ interface ConnectedMerchantsLandingProps {
 }
 
 export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore }: ConnectedMerchantsLandingProps) {
-  const [showAddDialog, setShowAddDialog] = useState(false);
   const { creditScore, maxCreditLimit, loading, connectedMerchantsCount } = usePayment();
 
   const merchants = [
@@ -20,28 +17,28 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
       name: 'Amazon',
       category: 'Everything Store',
       color: 'from-orange-500 to-amber-500',
-      icon: '🛒',
+      logo: '/merchants/amazon.svg',
     },
     {
       id: 'wayfair',
       name: 'Wayfair',
       category: 'Home & Furniture',
       color: 'from-purple-500 to-pink-500',
-      icon: '🏠',
+      logo: '/merchants/wayfair.svg',
     },
     {
       id: 'bestbuy',
       name: 'Best Buy',
       category: 'Electronics',
       color: 'from-blue-500 to-indigo-500',
-      icon: '💻',
+      logo: '/merchants/bestbuy.svg',
     },
     {
-      id: 'target',
-      name: 'Target',
-      category: 'Retail & Grocery',
-      color: 'from-red-500 to-rose-500',
-      icon: '🎯',
+      id: 'doordash',
+      name: 'DoorDash',
+      category: 'Food Delivery',
+      color: 'from-red-600 to-pink-600',
+      logo: '/merchants/doordash.svg',
     },
   ];
 
@@ -51,15 +48,17 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
               <span className="text-xl">✦</span>
             </div>
-            <span className="text-xl tracking-tight">WingsPay</span>
+            <span className="text-xl tracking-tight">Wings</span>
           </div>
           <div className="flex items-center gap-6">
             <span className="text-slate-600">Dashboard</span>
             <span className="text-slate-600">Activity</span>
-            <div className="h-8 w-8 rounded-full bg-slate-200" />
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
+              <span className="text-white text-sm">✦</span>
+            </div>
           </div>
         </div>
       </header>
@@ -68,27 +67,23 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* Hero Section */}
         <div className="mb-12">
-          <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full mb-4">
-            <CheckCircle2 className="h-4 w-4" />
-            <span className="text-sm">All Merchants Connected</span>
-          </div>
-          <h1 className="text-4xl mb-3">Your Connected Merchants</h1>
+          <h1 className="text-4xl mb-3">Your Merchants</h1>
           <p className="text-xl text-slate-600">
-            Shop seamlessly with flexible payment options powered by WingsPay
+            Shop seamlessly with flexible payment options powered by Wings
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 items-stretch">
           {/* Credit Score Card - Featured */}
           <button
             onClick={onViewCreditScore}
-            className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 border border-indigo-500 text-white hover:shadow-2xl hover:shadow-indigo-200 transition-all duration-300 group cursor-pointer"
+            className="bg-gradient-to-br from-sky-600 to-blue-600 rounded-2xl p-6 border border-sky-500 text-white hover:shadow-2xl hover:shadow-sky-200 transition-all duration-300 group cursor-pointer h-full min-h-[180px] flex flex-col justify-between"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5" />
-                <span className="text-sm opacity-90">WingsPay Score</span>
+                <span className="text-sm opacity-90">Wings Score</span>
               </div>
               <ArrowRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
@@ -99,60 +94,44 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
             </div>
           </button>
 
-          <div className="bg-white rounded-2xl p-6 border border-slate-200">
-            <div className="text-3xl mb-1">{loading ? '...' : connectedMerchantsCount}</div>
-            <div className="text-slate-600">Connected Stores</div>
-          </div>
-          <div className="bg-white rounded-2xl p-6 border border-slate-200">
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 h-full min-h-[180px]">
             <div className="text-3xl mb-1">{loading ? '...' : formatCurrency(maxCreditLimit)}</div>
             <div className="text-slate-600">Available Credit</div>
           </div>
-          <div className="bg-white rounded-2xl p-6 border border-slate-200">
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 h-full min-h-[180px]">
             <div className="text-3xl mb-1">0%</div>
             <div className="text-slate-600">Interest Rate</div>
           </div>
         </div>
 
         {/* Merchant Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           {merchants.map((merchant) => (
             <button
               key={merchant.id}
               onClick={() => onMerchantSelect(merchant.id)}
-              className="group bg-white rounded-2xl p-8 border border-slate-200 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 text-left"
+              className="group bg-white rounded-xl p-4 border border-slate-200 hover:border-sky-300 hover:shadow-lg hover:shadow-sky-100/50 transition-all duration-300 flex items-center gap-4"
             >
-              <div className="flex items-start justify-between mb-6">
-                <div className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${merchant.color} flex items-center justify-center text-3xl`}>
-                  {merchant.icon}
-                </div>
-                <ArrowRight className="h-6 w-6 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+              <div className="h-16 w-24 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-2 flex-shrink-0">
+                <img 
+                  src={merchant.logo} 
+                  alt={merchant.name}
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <h3 className="text-2xl mb-2">{merchant.name}</h3>
-              <p className="text-slate-600 mb-4">{merchant.category}</p>
-              <div className="flex items-center gap-2 text-sm text-indigo-600">
-                <ShoppingBag className="h-4 w-4" />
-                <span>Start Shopping</span>
+              <div className="flex-1 text-left">
+                <h3 className="text-base mb-0.5">{merchant.name}</h3>
+                <p className="text-xs text-slate-600 mb-1">{merchant.category}</p>
+                <div className="flex items-center gap-1 text-xs text-sky-600">
+                  <ShoppingBag className="h-3 w-3" />
+                  <span>Start Shopping</span>
+                </div>
               </div>
             </button>
           ))}
         </div>
 
-        {/* Add Connection Button */}
-        <div className="mt-12">
-          <Button
-            onClick={() => setShowAddDialog(true)}
-            className="h-14 px-8 text-lg bg-gradient-to-br from-indigo-600 to-purple-600 text-white hover:shadow-2xl hover:shadow-indigo-200 transition-all duration-300 hover:scale-105"
-          >
-            <Plus className="h-6 w-6 mr-2" />
-            Add Connection
-          </Button>
-        </div>
-
-        {/* Add Connection Dialog */}
-        <AddConnectionDialog
-          open={showAddDialog}
-          onClose={() => setShowAddDialog(false)}
-        />
+        {/* Add Connection actions removed per requirements */}
 
         {/* Info Banner */}
         <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8 border border-indigo-100">
@@ -161,12 +140,35 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
               <Store className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-xl mb-2">How WingsPay Works</h3>
+              <h3 className="text-xl mb-2">How Wings Works</h3>
               <p className="text-slate-700 leading-relaxed">
-                Shop at any connected merchant and choose WingsPay at checkout. Split your purchase into flexible installments with 0% interest. 
+                Shop at any connected merchant and choose Wings at checkout. Split your purchase into flexible installments with 0% interest. 
                 No hidden fees, just transparent and simple payments.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Powered By Bars */}
+        <div className="mt-8 space-y-4">
+          {/* Knot API Bar */}
+          <div className="bg-white rounded-xl p-6 border border-slate-200 flex items-center justify-center gap-3">
+            <span className="text-sm text-slate-600">Powered by</span>
+            <img 
+              src="/knot.svg" 
+              alt="Knot API"
+              className="h-8 object-contain"
+            />
+          </div>
+
+          {/* Capital One Bar */}
+          <div className="bg-white rounded-xl p-6 border border-slate-200 flex items-center justify-center gap-3">
+            <span className="text-sm text-slate-600">Powered by</span>
+            <img 
+              src="/capitalone.svg" 
+              alt="Capital One"
+              className="h-8 object-contain"
+            />
           </div>
         </div>
       </main>
