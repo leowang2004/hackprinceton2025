@@ -29,12 +29,12 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   });
 
   const merchants = [
-    { id: 'amazon', name: 'Amazon', icon: '🛒', color: 'from-orange-500 to-amber-500' },
-    { id: 'wayfair', name: 'Wayfair', icon: '🏠', color: 'from-purple-500 to-pink-500' },
-    { id: 'bestbuy', name: 'Best Buy', icon: '💻', color: 'from-blue-500 to-indigo-500' },
-    { id: 'target', name: 'Target', icon: '🎯', color: 'from-red-500 to-rose-500' },
-    { id: 'doordash', name: 'DoorDash', icon: '🍔', color: 'from-red-600 to-pink-600' },
-    { id: 'uber', name: 'Uber', icon: '🚗', color: 'from-slate-900 to-slate-700' },
+    { id: 'amazon', name: 'Amazon', logo: '/merchants/amazon.svg', color: 'from-orange-500 to-amber-500' },
+    { id: 'wayfair', name: 'Wayfair', logo: '/merchants/wayfair.svg', color: 'from-purple-500 to-pink-500' },
+    { id: 'bestbuy', name: 'Best Buy', logo: '/merchants/bestbuy.svg', color: 'from-blue-500 to-indigo-500' },
+    { id: 'target', name: 'Target', logo: '/merchants/target.svg', color: 'from-red-500 to-rose-500' },
+    { id: 'doordash', name: 'DoorDash', logo: '/merchants/doordash.svg', color: 'from-red-600 to-pink-600' },
+    { id: 'uber', name: 'Uber', logo: '/merchants/uber.svg', color: 'from-slate-900 to-slate-700' },
   ];
 
   // ⚡ Skip for Demo Efficiency
@@ -78,6 +78,10 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   };
 
   const handleMerchantRedirect = async (merchantId: string) => {
+    // Immediately mark as connected for demo purposes
+    const token = `${merchantId}_connected_${Date.now()}`;
+    setMerchantTokens(prev => ({ ...prev, [merchantId]: token }));
+    
     try {
       // Call backend API to create a session
       const response = await fetch('http://localhost:3000/api/session', {
@@ -118,12 +122,15 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         entryPoint: 'onboarding',
         onSuccess: (product, details) => {
           console.log('Successfully connected to merchant:', details);
-          // Mark merchant as connected
-          const token = `${merchantId}_connected_${Date.now()}`;
-          setMerchantTokens({ ...merchantTokens, [merchantId]: token });
         },
         onError: (product, errorCode, message) => {
           console.error('Error connecting merchant:', errorCode, message);
+          // Remove the token if connection failed
+          setMerchantTokens(prev => {
+            const updated = { ...prev };
+            delete updated[merchantId];
+            return updated;
+          });
           alert(`Failed to connect: ${message}`);
         },
         onExit: async (product) => {
@@ -155,22 +162,23 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         },
         onEvent: (product, event, merchant, merchantId, payload, taskId) => {
           console.log('Knot event:', event, merchant, payload);
-          
-          // Handle AUTHENTICATED event
-          if (event === 'AUTHENTICATED') {
-            const token = `${merchantId}_token_${taskId}`;
-            setMerchantTokens(prev => ({ ...prev, [merchantId]: token }));
-          }
         },
       });
     } catch (error) {
       console.error('Error initializing Knot SDK:', error);
+      // Remove the token if initialization failed
+      setMerchantTokens(prev => {
+        const updated = { ...prev };
+        delete updated[merchantId];
+        return updated;
+      });
       alert('Failed to connect merchant. Please try again.');
     }
   };
 
   const canProceedProfile = profileData.firstName && profileData.lastName && profileData.email;
-  const canProceedMerchants = selectedMerchants.length > 0 && selectedMerchants.every(id => merchantTokens[id]);
+  // Changed: Allow proceeding if at least one merchant is selected, regardless of token status
+  const canProceedMerchants = selectedMerchants.length > 0;
   const canProceedBank = bankData.accountName && bankData.routingNumber && bankData.accountNumber;
 
   return (
@@ -361,17 +369,21 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 <p className="text-slate-600 text-lg mb-4">
                   Link your shopping accounts to unlock your credit potential
                 </p>
-                {/* Knot API Badge */}
-                <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl px-4 py-3">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                    <span className="text-white text-lg">🔗</span>
+                {/* Knot API Badge - Full Width */}
+                <div className="flex items-center gap-4 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl px-6 py-4 w-full">
+                  <div className="h-16 w-16 rounded-lg bg-white border border-emerald-200 flex items-center justify-center p-2">
+                    <img 
+                      src="/knot.svg" 
+                      alt="Knot API"
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div>
-                    <div className="text-sm text-emerald-900 flex items-center gap-2">
+                    <div className="text-base text-emerald-900 flex items-center gap-2">
                       <span>Powered by</span>
-                      <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Knot API</span>
+                      <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-semibold">Knot API</span>
                     </div>
-                    <div className="text-xs text-emerald-700">Secure merchant connectivity platform</div>
+                    <div className="text-sm text-emerald-700">Secure merchant connectivity platform</div>
                   </div>
                 </div>
               </div>
@@ -384,19 +396,47 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                   return (
                     <div
                       key={merchant.id}
-                      className={`relative border-2 rounded-2xl p-6 transition-all ${
+                      className={`relative border-2 rounded-xl p-4 transition-all ${
                         isSelected
                           ? 'border-indigo-500 bg-indigo-50'
                           : 'border-slate-200 hover:border-slate-300 bg-white'
                       }`}
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${merchant.color} flex items-center justify-center text-2xl`}>
-                          {merchant.icon}
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center p-2 flex-shrink-0">
+                          <img 
+                            src={merchant.logo} 
+                            alt={merchant.name}
+                            className="w-full h-full object-contain"
+                          />
                         </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base font-medium mb-2">{merchant.name}</h3>
+                          
+                          {isSelected && !hasToken && (
+                            <Button
+                              onClick={() => handleMerchantRedirect(merchant.id)}
+                              variant="outline"
+                              size="sm"
+                              className="h-8 text-xs border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+                            >
+                              <ExternalLink className="h-3 w-3 mr-1" />
+                              Connect
+                            </Button>
+                          )}
+
+                          {hasToken && (
+                            <div className="flex items-center gap-1.5 text-xs text-green-700 bg-green-50 px-2 py-1 rounded-md w-fit">
+                              <CheckCircle2 className="h-3 w-3" />
+                              <span>Connected</span>
+                            </div>
+                          )}
+                        </div>
+
                         <button
                           onClick={() => handleMerchantToggle(merchant.id)}
-                          className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                          className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
                             isSelected
                               ? 'border-sky-600 bg-sky-600'
                               : 'border-slate-300 bg-white'
@@ -405,26 +445,6 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                           {isSelected && <CheckCircle2 className="h-4 w-4 text-white" />}
                         </button>
                       </div>
-
-                      <h3 className="text-lg mb-4">{merchant.name}</h3>
-
-                      {isSelected && !hasToken && (
-                        <Button
-                          onClick={() => handleMerchantRedirect(merchant.id)}
-                          variant="outline"
-                          className="w-full border-indigo-300 text-indigo-700 hover:bg-indigo-50"
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Connect Account
-                        </Button>
-                      )}
-
-                      {hasToken && (
-                        <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-3 py-2 rounded-lg">
-                          <CheckCircle2 className="h-4 w-4" />
-                          <span>Connected</span>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
@@ -466,17 +486,21 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 <p className="text-slate-600 text-lg mb-4">
                   Connect your financial profile securely
                 </p>
-                {/* Capital One Nessie Badge */}
-                <div className="inline-flex items-center gap-3 bg-gradient-to-r from-red-50 to-blue-50 border border-red-200 rounded-xl px-4 py-3">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-red-600 to-blue-600 flex items-center justify-center">
-                    <span className="text-white text-lg">🏦</span>
+                {/* Capital One Nessie Badge - Full Width */}
+                <div className="flex items-center gap-4 bg-gradient-to-r from-red-50 to-blue-50 border border-red-200 rounded-xl px-6 py-4 w-full">
+                  <div className="h-16 w-16 rounded-lg bg-white border border-red-200 flex items-center justify-center p-2">
+                    <img 
+                      src="/capitalone.svg" 
+                      alt="Capital One"
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div>
-                    <div className="text-sm text-red-900 flex items-center gap-2">
+                    <div className="text-base text-red-900 flex items-center gap-2">
                       <span>Powered by</span>
-                      <span className="bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent">Capital One Nessie</span>
+                      <span className="bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent font-semibold">Capital One Nessie</span>
                     </div>
-                    <div className="text-xs text-red-700">Enterprise-grade banking API</div>
+                    <div className="text-sm text-red-700">Enterprise-grade banking API</div>
                   </div>
                 </div>
               </div>

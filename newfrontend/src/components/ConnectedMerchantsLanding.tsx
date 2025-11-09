@@ -17,28 +17,28 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
       name: 'Amazon',
       category: 'Everything Store',
       color: 'from-orange-500 to-amber-500',
-      icon: '🛒',
+      logo: '/merchants/amazon.svg',
     },
     {
       id: 'wayfair',
       name: 'Wayfair',
       category: 'Home & Furniture',
       color: 'from-purple-500 to-pink-500',
-      icon: '🏠',
+      logo: '/merchants/wayfair.svg',
     },
     {
       id: 'bestbuy',
       name: 'Best Buy',
       category: 'Electronics',
       color: 'from-blue-500 to-indigo-500',
-      icon: '💻',
+      logo: '/merchants/bestbuy.svg',
     },
     {
       id: 'doordash',
       name: 'DoorDash',
       category: 'Food Delivery',
       color: 'from-red-600 to-pink-600',
-      icon: '🍔',
+      logo: '/merchants/doordash.svg',
     },
   ];
 
@@ -105,21 +105,27 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
         </div>
 
         {/* Merchant Grid */}
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           {merchants.map((merchant) => (
             <button
               key={merchant.id}
               onClick={() => onMerchantSelect(merchant.id)}
-              className="group bg-white rounded-xl p-4 border border-slate-200 hover:border-sky-300 hover:shadow-lg hover:shadow-sky-100/50 transition-all duration-300 text-center aspect-square flex flex-col items-center justify-center"
+              className="group bg-white rounded-xl p-4 border border-slate-200 hover:border-sky-300 hover:shadow-lg hover:shadow-sky-100/50 transition-all duration-300 flex items-center gap-4"
             >
-              <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${merchant.color} flex items-center justify-center text-3xl mb-3`}>
-                {merchant.icon}
+              <div className="h-16 w-24 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-2 flex-shrink-0">
+                <img 
+                  src={merchant.logo} 
+                  alt={merchant.name}
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <h3 className="text-base mb-1">{merchant.name}</h3>
-              <p className="text-xs text-slate-600 mb-2">{merchant.category}</p>
-              <div className="flex items-center gap-1 text-xs text-sky-600">
-                <ShoppingBag className="h-3 w-3" />
-                <span>Start Shopping</span>
+              <div className="flex-1 text-left">
+                <h3 className="text-base mb-0.5">{merchant.name}</h3>
+                <p className="text-xs text-slate-600 mb-1">{merchant.category}</p>
+                <div className="flex items-center gap-1 text-xs text-sky-600">
+                  <ShoppingBag className="h-3 w-3" />
+                  <span>Start Shopping</span>
+                </div>
               </div>
             </button>
           ))}
@@ -140,6 +146,29 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore 
                 No hidden fees, just transparent and simple payments.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Powered By Bars */}
+        <div className="mt-8 space-y-4">
+          {/* Knot API Bar */}
+          <div className="bg-white rounded-xl p-6 border border-slate-200 flex items-center justify-center gap-3">
+            <span className="text-sm text-slate-600">Powered by</span>
+            <img 
+              src="/knot.svg" 
+              alt="Knot API"
+              className="h-8 object-contain"
+            />
+          </div>
+
+          {/* Capital One Bar */}
+          <div className="bg-white rounded-xl p-6 border border-slate-200 flex items-center justify-center gap-3">
+            <span className="text-sm text-slate-600">Powered by</span>
+            <img 
+              src="/capitalone.svg" 
+              alt="Capital One"
+              className="h-8 object-contain"
+            />
           </div>
         </div>
       </main>
