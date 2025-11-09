@@ -1,5 +1,0 @@
-dedalus-labs
-fastapi
-uvicorn[standard]
-python-dotenv
-
