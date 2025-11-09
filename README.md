@@ -5,7 +5,8 @@
 This repository contains two complementary experiences that turn raw purchase data into actionable financial coaching:
 
 1. **iMessage Financial Coach** – a conversational assistant that pulls transactions from Snowflake, enriches them with Nessie + Knot data, and answers questions through Snowflake Cortex, OpenAI, and optional Dedalus Labs models. Responses are chunked and timed for a native iMessage feel via Photon’s iMessage Kit.
-2. **WingsPay Web App** – a React/Vite + Express experience that demonstrates a BNPL checkout flow, credit scoring dashboard, and rich merchant storefronts powered by the same data sources. Hosted on +1 (857) 205-6667.
+iMessage Bot hosted on +1 (857) 205-6667.
+2. **WingsPay Web App** – a React/Vite + Express experience that demonstrates a BNPL checkout flow, credit scoring dashboard, and rich merchant storefronts powered by the same data sources. 
 
 Together they showcase a full-stack “coach + checkout” story: ingest real merchant data, store it in Snowflake, reason over it with LLMs, and surface guidance in both chat and web surfaces.
 
