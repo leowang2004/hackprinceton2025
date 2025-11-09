@@ -2179,13 +2179,6 @@ Q: "I want to buy a new laptop, but I'm worried I'm spending too much"
       else if (lowerMessage.includes("clothing") || lowerMessage.includes("clothes")) category = "clothing";
       return { intent: "shopping_recommendation", time_range: { start: null, end: null }, limit: null, params: { category } };
     }
-    if (
-      (lowerMessage.includes("worried") || lowerMessage.includes("too much") || lowerMessage.includes("already have")) &&
-      (lowerMessage.includes("laptop") || lowerMessage.includes("computer") || lowerMessage.includes("macbook") || lowerMessage.includes("electronics"))
-    ) {
-      const paramsReview = { category: "laptop" };
-      return { intent: "purchase_review", time_range: { start: null, end: null }, limit: null, params: paramsReview };
-    }
     
     return { intent: "fallback", time_range: { start: null, end: null }, limit: null, params };
   }
@@ -2568,67 +2561,6 @@ async function answerFromQuery(query) {
 
     case "shopping_recommendation": {
       return await generateShoppingRecommendations(query.params?.category);
-    }
-
-    case "purchase_review": {
-      const category = query.params?.category || "purchase";
-      const keywords = Array.isArray(query.params?.keywords)
-        ? query.params.keywords
-        : [];
-
-      const analysis = analyzeRecentSimilarPurchases({
-        category,
-        keywords,
-        lookbackDays: 365,
-      });
-
-      if (!analysis.matches.length) {
-        return (
-          "It's always smart to pause before making a big purchase. I didn't spot a similar item in your recent history, " +
-          "but consider whether upgrading now fits your budget and needs. If you're unsure, you could hold off a bit longer or set aside funds over the next month before deciding."
-        );
-      }
-
-      const latest = analysis.matches[0];
-      const latestDate = latest.datetime
-        ? new Date(latest.datetime).toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })
-        : "recently";
-
-      const lines = [];
-      lines.push(
-        `I get it—you don't want to overspend. You actually picked up a ${latest.name} from ${
-          latest.merchant_name || "that merchant"
-        } on ${latestDate}.`
-      );
-
-      if (analysis.matches.length > 1) {
-        const otherCount = analysis.matches.length - 1;
-        const recap = analysis.matches.slice(1, 4).map((item) => {
-          const date = item.datetime
-            ? new Date(item.datetime).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })
-            : "recently";
-          return `• ${item.name} (${item.merchant_name || "unknown merchant"}) on ${date}`;
-        });
-
-        lines.push(
-          `In fact, you have ${analysis.matches.length} related purchases in the past year, totaling about $${analysis.totalSpent.toFixed(
-            2
-          )}. Here's a quick recap:\n${recap.join("\n")}`
-        );
-      }
-
-      lines.push(
-        "Since you already have a solid setup, waiting a little longer could save you money. Maybe revisit the idea in a few months, keep an eye on sales, or consider upgrading components on the device you already own instead of buying a brand new one right now."
-      );
-
-      return lines.join("\n\n");
     }
 
     case "cashback":
