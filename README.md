@@ -1,4 +1,6 @@
-# OmniChannel Financial Coach
+# Wings
+## HackPrinceton Project 2025
+## Athena Zhong, Niki Hu, Leo Wang, Lu
 
 This repository contains two complementary experiences that turn raw purchase data into actionable financial coaching:
 
