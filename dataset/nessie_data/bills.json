@@ -1,0 +1,68 @@
+[
+  {
+    "_id": "690f959608f7513c4ad89fe6",
+    "status": "pending",
+    "payee": "string",
+    "nickname": "credit card payment",
+    "payment_date": "2025-11-08",
+    "recurring_date": 1,
+    "payment_amount": 200,
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f95a208f7513c4ad89fe7",
+    "status": "pending",
+    "payee": "string",
+    "nickname": "credit card payment",
+    "payment_date": "2025-11-01",
+    "recurring_date": 1,
+    "payment_amount": 200,
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f95a508f7513c4ad89fe8",
+    "status": "pending",
+    "payee": "string",
+    "nickname": "credit card payment",
+    "payment_date": "2025-10-01",
+    "recurring_date": 1,
+    "payment_amount": 200,
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f95ab08f7513c4ad89fe9",
+    "status": "pending",
+    "payee": "string",
+    "nickname": "credit card payment",
+    "payment_date": "2025-09-01",
+    "recurring_date": 1,
+    "payment_amount": 400,
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f95b208f7513c4ad89fea",
+    "status": "pending",
+    "payee": "string",
+    "nickname": "credit card payment",
+    "payment_date": "2025-08-01",
+    "recurring_date": 1,
+    "payment_amount": 300,
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  },
+  {
+    "_id": "690f95bb08f7513c4ad89feb",
+    "status": "pending",
+    "payee": "string",
+    "nickname": "credit card payment",
+    "payment_date": "2025-07-01",
+    "recurring_date": 1,
+    "payment_amount": 350,
+    "creation_date": "2025-11-08",
+    "account_id": "690f8d1708f7513c4ad89fda"
+  }
+]
