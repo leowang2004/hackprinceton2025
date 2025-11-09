@@ -212,11 +212,16 @@ app.get('*', (req, res) => {
 });
 
 // --- Start Server ---
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-  console.log('Ready to calculate credit scores using comprehensive bank data.');
-  console.log(`Test endpoint: http://localhost:${PORT}/api/get-credit-score`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+    console.log('Ready to calculate credit scores using comprehensive bank data.');
+    console.log(`Test endpoint: http://localhost:${PORT}/api/get-credit-score`);
+  });
+}
+
+// Export for Vercel serverless
+export default app;
 
 
 // --- Business Logic Functions ---
