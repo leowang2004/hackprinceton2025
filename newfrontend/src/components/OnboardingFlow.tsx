@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, User, ShoppingBag, Building2, Lock
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import KnotapiJS from 'knotapi-js';
 
 interface OnboardingFlowProps {
   onComplete: () => void;
@@ -46,10 +47,96 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     }
   };
 
-  const handleMerchantRedirect = (merchantId: string) => {
-    // Simulate OAuth redirect
-    const token = `${merchantId}_token_${Math.random().toString(36).substring(7)}`;
-    setMerchantTokens({ ...merchantTokens, [merchantId]: token });
+  const handleMerchantRedirect = async (merchantId: string) => {
+    try {
+      // Call backend API to create a session
+      const response = await fetch('http://localhost:3000/api/session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({  
+          external_user_id: profileData.email || `user_${Date.now()}`,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create session');
+      }
+
+      const sessionData = await response.json();
+      const { session } = sessionData;
+
+      // Get client_id and environment from environment variables
+      const clientId = import.meta.env.VITE_KNOT_CLIENT_ID;
+      const environment = import.meta.env.VITE_KNOT_ENVIRONMENT as 'development' | 'production';
+
+      if (!clientId) {
+        throw new Error('VITE_KNOT_CLIENT_ID is not configured');
+      }
+
+      // Initialize Knot SDK
+      const knotapi = new KnotapiJS();
+
+      // Open Knot SDK with merchant connection flow
+      knotapi.open({
+        sessionId: session,
+        clientId: clientId,
+        environment: environment || 'development',
+        product: 'transaction_link',
+        merchantIds: [Number(merchantId)],
+        entryPoint: 'onboarding',
+        onSuccess: (product, details) => {
+          console.log('Successfully connected to merchant:', details);
+          // Mark merchant as connected
+          const token = `${merchantId}_connected_${Date.now()}`;
+          setMerchantTokens({ ...merchantTokens, [merchantId]: token });
+        },
+        onError: (product, errorCode, message) => {
+          console.error('Error connecting merchant:', errorCode, message);
+          alert(`Failed to connect: ${message}`);
+        },
+        onExit: async (product) => {
+          console.log('User exited merchant connection flow');
+          // Fetch transactions after user exits
+          try {
+            const transactionResponse = await fetch('http://localhost:3000/api/transactions/sync', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                external_user_id: profileData.email || `user_${Date.now()}`,
+                merchant_id: 44,
+                limit: 100,
+              }),
+            });
+
+            if (transactionResponse.ok) {
+              const transactionData = await transactionResponse.json();
+              console.log('Transactions fetched:', transactionData);
+              // You can store or process transaction data here
+            } else {
+              console.error('Failed to fetch transactions');
+            }
+          } catch (error) {
+            console.error('Error fetching transactions:', error);
+          }
+        },
+        onEvent: (product, event, merchant, merchantId, payload, taskId) => {
+          console.log('Knot event:', event, merchant, payload);
+          
+          // Handle AUTHENTICATED event
+          if (event === 'AUTHENTICATED') {
+            const token = `${merchantId}_token_${taskId}`;
+            setMerchantTokens(prev => ({ ...prev, [merchantId]: token }));
+          }
+        },
+      });
+    } catch (error) {
+      console.error('Error initializing Knot SDK:', error);
+      alert('Failed to connect merchant. Please try again.');
+    }
   };
 
   const canProceedProfile = profileData.firstName && profileData.lastName && profileData.email;
