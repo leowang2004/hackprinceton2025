@@ -55,6 +55,13 @@ function AppContent({
 }) {
   const { setCartItems } = usePayment();
 
+  // Always jump to top on step/merchant change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+  }, [currentStep, selectedMerchant]);
+
   // Define merchant-specific products
   const loadMerchantProduct = (merchantId: string) => {
     const merchantProducts: Record<string, any> = {

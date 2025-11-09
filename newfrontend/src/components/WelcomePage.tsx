@@ -8,16 +8,16 @@ interface WelcomePageProps {
 
 export function WelcomePage({ onGetStarted }: WelcomePageProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
-          className="absolute top-1/4 left-1/5 w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"
           animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.3, 0.2],
-            x: [0, 30, 0],
-            y: [0, -20, 0],
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+            x: [0, 50, 0],
+            y: [0, -30, 0],
           }}
           transition={{
             duration: 8,
@@ -26,12 +26,12 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           }}
         />
         <motion.div 
-          className="absolute bottom-1/5 right-1/6 w-[500px] h-[500px] bg-purple-500/15 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
           animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.15, 0.25, 0.15],
-            x: [0, -20, 0],
-            y: [0, 15, 0],
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.6, 0.3],
+            x: [0, -50, 0],
+            y: [0, 30, 0],
           }}
           transition={{
             duration: 10,
@@ -120,7 +120,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
             }}
           />
           <motion.div 
-            className="relative h-24 w-24 rounded-3xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-purple-500/50"
+            className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-2xl"
             animate={{
               y: [0, -10, 0],
             }}
@@ -175,14 +175,25 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Unlock More with{' '}
-            <span className="bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(168,85,247,0.5)]">
-              Wings
+            Unlock More with{" "}
+            <span className="relative inline-block">
+              <motion.span
+                className="bg-clip-text text-transparent bg-[length:200%_100%] bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-300"
+                style={{ backgroundPosition: '0% 50%' }}
+                animate={{ backgroundPosition: ['0% 50%','100% 50%','0% 50%'] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                Wings
+              </motion.span>
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -inset-1 rounded-xl bg-gradient-to-r from-indigo-500/30 to-purple-500/30 blur-md"
+              />
             </span>
           </motion.h1>
           
           <motion.p 
-            className="text-2xl text-slate-200 leading-relaxed drop-shadow-lg"
+            className="text-2xl text-slate-300 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.6 }}

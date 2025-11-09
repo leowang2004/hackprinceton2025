@@ -222,13 +222,13 @@ export function ConnectedMerchantsLanding({ onMerchantSelect, onViewCreditScore,
             <h2 className="text-3xl">Explore More Merchants</h2>
           </div>
           <div className="relative mb-6">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <Input
               type="text"
               placeholder="Search merchants..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-14 pl-16 pr-4 border border-slate-300/80 rounded-2xl bg-white shadow-sm"
+              className="w-full h-12 pl-12 pr-4 border border-slate-300 rounded-xl"
             />
           </div>
           <div className="grid md:grid-cols-2 gap-6 mb-6">

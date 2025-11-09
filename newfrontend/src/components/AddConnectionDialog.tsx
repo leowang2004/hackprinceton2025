@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, CheckCircle2, ExternalLink, Lock, Plus } from 'lucide-react';
+import { X, CheckCircle2, ExternalLink, Lock, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -124,9 +124,12 @@ export function AddConnectionDialog({ open, onClose }: AddConnectionDialogProps)
             <div className="mb-6">
               <button
                 onClick={() => setConnectionType(null)}
-                className="text-sm text-slate-600 hover:text-slate-900 mb-4"
+                className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 group"
               >
-                ← Back to options
+                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                <span className="text-sm underline decoration-transparent group-hover:decoration-slate-400">
+                  Back to options
+                </span>
               </button>
               
               {/* Knot API Badge */}
@@ -228,9 +231,12 @@ export function AddConnectionDialog({ open, onClose }: AddConnectionDialogProps)
             <div className="mb-6">
               <button
                 onClick={() => setConnectionType(null)}
-                className="text-sm text-slate-600 hover:text-slate-900 mb-4"
+                className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 group"
               >
-                ← Back to options
+                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                <span className="text-sm underline decoration-transparent group-hover:decoration-slate-400">
+                  Back to options
+                </span>
               </button>
 
               {/* Capital One Nessie Badge */}
